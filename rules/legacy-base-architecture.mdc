@@ -1,0 +1,13 @@
+---
+description: Legacy base architecture for VUCEM trámites. Use when reading or changing classes under legacy/vuc_mtto_commons, or before treating a commons parent as one trámite's behavior.
+globs:
+  - "legacy/vuc_mtto_commons/**"
+  - ".cursor/knowledge/legacy-base/**"
+alwaysApply: false
+---
+
+# Legacy base
+
+Read `.cursor/knowledge/legacy-base/architecture.md` before treating a commons class as this trámite's behavior.
+
+The module `pom.xml` artifact selects the commons tree. Do not describe a method from a different tree. Parent method bodies stay in that architecture file. A process knowledge base records only overrides.

@@ -1,0 +1,18 @@
+---
+description: Process 32515 Aviso Valor Provisional. Use when the user mentions 32515, Aviso Valor Provisional, solicitudAvisoValorProvisional, or files under avisoValorProvisional. Read the process knowledge base before changing this trámite.
+globs:
+  - "**/avisoValorProvisional/**"
+  - ".cursor/knowledge/procesos/32515/**"
+alwaysApply: false
+---
+
+# Process 32515 — Aviso Valor Provisional
+
+Read `.cursor/knowledge/procesos/32515/legacy.md` before changing this trámite. Do not reuse a sibling aviso.
+
+- Process number: `32515`
+- Entity: `SolicitudAvisoValorProvisional` (`@DiscriminatorValue` `32515`)
+- Registro controller: `RegistroSolicitudAvisoValorProvisionalController`
+- Service: `registroSolicitudAvisoValorProvisionalService` (`RegistroSolicitudAvisoValorProvisionalServicesPOJOImpl`)
+- Rules: `RegistroSolicitudAvisoValorProvisionalRules` (no methods). `REANX.VPM` is on the service
+- Commons tree: `legacy/vuc_mtto_commons/base-jms-ibm`
