@@ -1,6 +1,14 @@
 # VUCEM field check
 
-This folder is the shared Cursor setup for comparing one trámite’s old page with its new form. Open the parent folder in Cursor. The parent folder can have any name. These paths have to sit inside it:
+This folder is the shared Cursor setup for comparing one trámite’s old page with its new form.
+Initial setup
+
+Clone the shared Cursor configuration repository inside your project’s parent folder:
+
+git clone https://github.com/Sreehari-V-06/cursor-config.git .cursor
+
+Important: Run this command from the parent folder where you want to work. It automatically creates the .cursor folder containing the shared rules, knowledge, and skills.
+Open the parent folder in Cursor. The parent folder can have any name. These paths have to sit inside it:
 
 ```
 <open folder>/
