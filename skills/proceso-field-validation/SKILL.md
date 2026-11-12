@@ -48,7 +48,7 @@ Confirm the migrated tree is this process: the folder name, a route, or a proced
 
 Fill [report-template.md](report-template.md). Delete none of its sections. Do not write this report under `.cursor/knowledge`.
 
-Write for a person who will choose rows to fix. Open with what they can still do on the screen. Under each section heading, one short sentence in everyday language. In the reading columns, say **Old page** and **New page**. Put file names only in Evidence. Group **Incorrect** rows under a short heading when several rows are the same kind of problem. Keep every row.
+Write for a person who will choose rows to fix, and for the frontend developer who will make the change. Open with what they can still do on the screen. Under each section heading, one short sentence in everyday language. In the reading columns, say **Old page** and **New page**. The **Item** cell is the full label shown on the screen. Do not shorten it. The last column is **Where to change**: the file inside this process folder, the field or method, and the change in plain words. Name a shared file only when this form cannot do the change alone. Do not fill that column with a `legacy.md` citation. Group **Incorrect** rows under a short heading when several rows are the same kind of problem. Keep every row.
 
 The first column of **Incorrect**, **Missing**, **Incomplete**, and **UI behavior** is **Fix**. An open row uses `- [ ]`. A chosen row has `x` inside the brackets: `- [x]`, `- [X]`, `- [ x]`, or `[x]`. A Match row leaves that cell empty. An `x` written outside the brackets is not a choice. This mark is plain Markdown so the same file works on any system. Do not use an HTML checkbox, a preview widget, or a plugin. Do not add a second list above the table. When this pass rewrites the report, keep a chosen mark on a row that is still open. Do not edit the form in this pass. The user runs `/proceso-field-fix` after saving the marks.
 
@@ -118,15 +118,15 @@ A legacy cell that says `Not found` is not a gap. Put it under **Not compared**.
 When the previous report exists, pair each previous **Incorrect**, **Missing**, and **Incomplete** item with this pass by its item name.
 
 - The item now matches the legacy rule: remove it from the open table. Add it under **Corrected** with the previous verdict, the previous mismatch, and the rule the current code enforces. Cite the migrated file that now holds the fix.
-- The item is still wrong: keep it in **Incorrect**, **Missing**, or **Incomplete** with this pass’s verdict. If the verdict changed, say the previous verdict in Evidence.
-- A **Corrected** row that fails again: remove it from **Corrected** and put it back in the open table. In Evidence, say it had been corrected and failed again.
+- The item is still wrong: keep it in **Incorrect**, **Missing**, or **Incomplete** with this pass’s verdict. If the verdict changed, say the previous verdict in **Where to change**.
+- A **Corrected** row that fails again: remove it from **Corrected** and put it back in the open table. In **Where to change**, say it had been corrected and failed again.
 - A new mismatch that was not in the previous report: add it to the open table for this pass’s verdict.
 
 **Corrected** is a record of what changed. It is not an open gap. Do not count a corrected item again under Match. Increment the pass number and set the run date.
 
-## Evidence
+## Where to change
 
-Every finding cites the legacy knowledge-base row and the migrated file. Do not grade a sibling trámite. Do not treat a label asterisk alone as a legacy required rule; `legacy.md` already applied that distinction.
+Every finding names the file inside this process folder, the field or method, and the change. Do not grade a sibling trámite. Do not treat a label asterisk alone as a legacy required rule; `legacy.md` already applied that distinction.
 
 ## After writing
 

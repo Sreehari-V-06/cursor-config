@@ -8,11 +8,13 @@ alwaysApply: false
 
 # Process 32515 — Aviso Valor Provisional
 
-Read `.cursor/knowledge/procesos/32515/legacy.md` before changing this trámite. Do not reuse a sibling aviso.
+Read `.cursor/knowledge/procesos/32515/legacy.md` before changing this trámite.
 
 - Process number: `32515`
-- Entity: `SolicitudAvisoValorProvisional` (`@DiscriminatorValue` `32515`)
-- Registro controller: `RegistroSolicitudAvisoValorProvisionalController`
-- Service: `registroSolicitudAvisoValorProvisionalService` (`RegistroSolicitudAvisoValorProvisionalServicesPOJOImpl`)
-- Rules: `RegistroSolicitudAvisoValorProvisionalRules` (no methods). `REANX.VPM` is on the service
-- Commons tree: `legacy/vuc_mtto_commons/base-jms-ibm`
+- Entity: `SolicitudAvisoValorProvisional` — `@DiscriminatorValue` `AvisoValorProvisional.ID_AVISO_VALOR_PROVISIONAL` (`32515`)
+- Package: `legacy/vuc_mtto_aga2/avisos-agace/src/mx/gob/ventanillaunica/www/avisosAgace/avisoValorProvisional`
+- Registro URL: `/avisos-agace/avisoValorProvisional/solicitudAvisoValorProvisional.action`
+- Consulta URL: `/avisos-agace/avisoValorProvisional/consultaSolicitudAvisoValorProvisional.action`
+- Session key: `AvisoValorProvisional.VALOR_PROV_DTO` = `ValorProvisionalDto`
+- Spring bean (solicitud): `SolicitudAvisoValorProvisional` in `legacy/vuc_mtto_aga2/avisos-agace/WebContent/WEB-INF/config/spring/avisosAgace/tramites/tramite-envioavisos-context.xml`
+- Module pom base artifact: `base-jms-ibm` — commons tree: `legacy/vuc_mtto_commons/base-jms-ibm`
