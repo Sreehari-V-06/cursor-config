@@ -17,9 +17,9 @@ disable-model-invocation: true
 
 This skill is a backend fix. It edits Java in the new backend module for this process. It does not edit the form, JSP, or JS. If the ticket is a form or page mismatch, stop. Tell the user to run `/proceso-field-fix`. Do not look for the form on this machine.
 
-The parent folder must contain `.cursor/` and the old code in `old/` or `legacy/`. Letter case does not matter. If neither old-code folder is present, stop. Say the parent must contain `.cursor/` and the old code in `old/` or `legacy/`. Do not look for the old code anywhere else.
+The parent folder must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Letter case does not matter. If none of those folders is present, stop. Say the parent must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Do not look for the old code anywhere else.
 
-The form may be absent. This command also needs the new backend module for this process. A folder named `ms-sat-t<process id>` is one example. That module's parent path differs by machine. Search the parent for it. One match: use it. More than one: list the paths and ask. Stop. None: ask for the path and stop.
+The form may be absent. This command also needs the new backend module for this process. A folder named `ms-sat-t<process id>` is one example. That module may sit under `new code/`, or at another path in the parent. Search the parent for it, including inside `new code/`. One match: use it. More than one: list the paths and ask. Stop. None: ask for the path and stop.
 
 This command edits the new backend process module. It does not open a pull request. It does not commit. It may add one confirmed row to the process code map. It does not rewrite the rest of that file, an analysis card, or the ticket.
 
@@ -47,7 +47,7 @@ Read these in order. Do not compare code until this step is done.
 
 ## Old code
 
-Open the **Code map** row for the behavior the ticket names. Read that file and method. Do not search `old/` or `legacy/` for another class with a similar name. Do not open a path listed under **Do not open**.
+Open the **Code map** row for the behavior the ticket names. Read that file and method. Do not search `old/`, `legacy/`, or `old code/` for another class with a similar name. Do not open a path listed under **Do not open**.
 
 If the map has no row for that behavior, follow calls from the controller named in the same `legacy.md`. Do not search the rest of the old tree. When that follow proves the file and method, add one row to the code map: behavior, class, method, file, and any sibling you rejected under **Do not open**. Leave the other rows unchanged.
 
@@ -57,7 +57,7 @@ Read a commons parent only when the code map names it, or when `.cursor/knowledg
 
 ## New code
 
-Search the open folder for the new backend module for this process. A folder named `ms-sat-t<process id>` is one example. Read the controller, service, rules, repository, and request for that same behavior. One match: use it. More than one: list the paths and ask. Stop. None: ask for the path and stop.
+Search the open folder for the new backend module for this process, including inside a folder named `new code/`. A folder named `ms-sat-t<process id>` is one example. Read the controller, service, rules, repository, and request for that same behavior. One match: use it. More than one: list the paths and ask. Stop. None: ask for the path and stop.
 
 ## Cause
 
@@ -78,8 +78,8 @@ Change only the behavior the ticket describes. Do not retune an unmarked path in
 ## Steps
 
 ```
-- [ ] Stop unless the parent contains .cursor and the old code in old/ or legacy/
-- [ ] Find the new backend module in the parent; ask if that match is missing or not unique
+- [ ] Stop unless the parent contains .cursor and the old code in old/, legacy/, or old code/
+- [ ] Find the new backend module in the parent, including inside new code/; ask if that match is missing or not unique
 - [ ] Ask for the GitHub issue when the message does not include one
 - [ ] Read the issue with gh issue view
 - [ ] Take the process id, or ask when it is missing or ambiguous

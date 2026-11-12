@@ -2,7 +2,7 @@
 
 Legacy knowledge base. Source of truth for this trámite only. Built from the controller `<ClassName>`.
 
-Open the files in **Code map**. Do not search `old/` or `legacy/` for another class with a similar name. A path under **Do not open** is the wrong implementation.
+Open the files in **Code map**. Do not search `old/`, `legacy/`, or `old code/` for another class with a similar name. A path under **Do not open** is the wrong implementation.
 
 ## Identity
 

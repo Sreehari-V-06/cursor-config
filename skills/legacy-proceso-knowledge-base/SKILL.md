@@ -5,7 +5,8 @@ description: >
   correct old file without searching the whole old tree. Use when anyone who
   has the old code gives a process number (such as 32515) and a controller
   class or path and asks for a knowledge base, process map, or legacy field
-  and validation inventory. The old code is under old/ or legacy/. Read-only
+  and validation inventory. The old code is under old/, legacy/, or old code/.
+  Read-only
   on Java, JSP, JS, and Spring XML. Do not use this skill to validate the form
   or to fix a backend GitHub issue. Form validation is
   /proceso-field-validation. The backend fix is /github-ticket-fix-backend.
@@ -14,13 +15,13 @@ disable-model-invocation: true
 
 # Legacy process knowledge base
 
-This skill writes `.cursor/knowledge/procesos/<processNumber>/legacy.md` for one process. The old tree is large, and a similar class in a sibling trámite is the wrong implementation. The knowledge base exists so a later agent opens the file and method this process actually runs, and does not search `old/` or `legacy/` for another match.
+This skill writes `.cursor/knowledge/procesos/<processNumber>/legacy.md` for one process. The old tree is large, and a similar class in a sibling trámite is the wrong implementation. The knowledge base exists so a later agent opens the file and method this process actually runs, and does not search `old/`, `legacy/`, or `old code/` for another match.
 
 A backend developer and a frontend developer both use it. It does not validate the form. It does not fix a backend GitHub issue. Those commands are `/proceso-field-validation` and `/github-ticket-fix-backend`. They read this file first.
 
-The parent folder is the folder opened in Cursor. It must contain `.cursor/` and the old code. The old code is `old/` or `legacy/`. Letter case does not matter. One of those is enough. If neither is present, stop. Say the parent must contain `.cursor/` and the old code in `old/` or `legacy/`. Do not look for the old code anywhere else.
+The parent folder is the folder opened in Cursor. It must contain `.cursor/` and the old code. The old code is `old/`, `legacy/`, or `old code/`. Letter case does not matter. One of those is enough. If none of them is present, stop. Say the parent must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Do not look for the old code anywhere else.
 
-The new form and the new backend may be absent. Do not stop because they are missing. Do not search for them.
+The new form and the new backend may be absent. When they are present, they may sit in a folder named `new code/`. Do not stop because they are missing. Do not search for them.
 
 Build one knowledge base for the legacy trámite the user names. Read code. Do not edit Java, JSP, JS, or Spring XML.
 
@@ -45,7 +46,7 @@ If `legacy.md` already exists, correct it. A **File** cell that points at a sibl
 Copy this checklist and mark each item as you finish it:
 
 ```
-- [ ] Stop unless the parent contains .cursor and the old code in old/ or legacy/
+- [ ] Stop unless the parent contains .cursor and the old code in old/, legacy/, or old code/
 - [ ] Do not stop because the new form or the new backend is missing
 - [ ] Ask for the process number when the message does not include one
 - [ ] Ask for the controller when the message does not include one
@@ -73,7 +74,7 @@ Use the registro parent chain in that file only when the named controller extend
 
 ### 1. Resolve the controller
 
-A path is the file to open. A class name is a search for `<ClassName>.java` inside `old/` and `legacy/` only.
+A path is the file to open. A class name is a search for `<ClassName>.java` inside `old/`, `legacy/`, and `old code/` only.
 
 One file: use it. More than one: list the paths and ask which controller to use. Stop. None: ask for the path and stop. Do not search the rest of the parent.
 
@@ -93,7 +94,7 @@ Sibling process numbers in the same parent folder are other trámites. Name them
 
 ### 4. Commons parent
 
-Read the module `pom.xml` and record the base `artifactId`. That artifact must match one tree named in `.cursor/knowledge/legacy-base/architecture.md`. That file may say `legacy/vuc_mtto_commons/base-jms-ibm`. On this machine the same module is under `old/` or `legacy/`. Open the copy in the old-code folder already chosen. One match: open it. More than one: list the paths and ask. Stop. None: ask for the path and stop. Open only that tree. Do not describe a method from another tree.
+Read the module `pom.xml` and record the base `artifactId`. That artifact must match one tree named in `.cursor/knowledge/legacy-base/architecture.md`. That file may say `legacy/vuc_mtto_commons/base-jms-ibm`. On this machine the same module is under `old/`, `legacy/`, or `old code/`. Open the copy in the old-code folder already chosen. One match: open it. More than one: list the paths and ask. Stop. None: ask for the path and stop. Open only that tree. Do not describe a method from another tree.
 
 For each method the architecture file lists on the controller, service, and rules parents, write one line: `not overridden`, or `overridden — <effect>`. Cite the process class that overrides it. Do not paste parent source. Do not copy the variant list, the stripes contract, or the `parentSelectName` contract into the process file. A tab switch before Guardar is process behavior: record it under **Submit validation** only when this trámite’s script does it.
 

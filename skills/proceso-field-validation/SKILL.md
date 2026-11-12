@@ -17,11 +17,11 @@ disable-model-invocation: true
 
 This skill is a frontend command. It compares the old page with the new form. It does not fix a backend GitHub issue. That command is `/github-ticket-fix-backend`.
 
-The parent folder must contain `.cursor/` and the old code in `old/` or `legacy/`. Letter case does not matter. If neither old-code folder is present, stop. This command does not read that old tree. The inventory is `.cursor/knowledge/procesos/<processNumber>/legacy.md`.
+The parent folder must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Letter case does not matter. If none of those folders is present, stop. This command does not read that old tree. The inventory is `.cursor/knowledge/procesos/<processNumber>/legacy.md`.
 
-It also needs the new form folder for this process. Search the parent for `tramites/<processNumber>`. `Project/frontend/apps/agace/src/app/application/tramites/32515/` is one example. One match: use it. More than one: list the paths and ask which tree to use. Stop. None: ask for the path and stop. The new backend may be absent. Do not stop because it is missing.
+It also needs the new form folder for this process. Search the parent for `tramites/<processNumber>`, including inside a folder named `new code/`. `Project/frontend/apps/agace/src/app/application/tramites/32515/` is one example. One match: use it. More than one: list the paths and ask which tree to use. Stop. None: ask for the path and stop. The new backend may be absent. Do not stop because it is missing.
 
-When an old file has to be opened, open the path in the **Code map** of `legacy.md`. Do not search `old/` or `legacy/` for a similar class. A path under **Do not open** is the wrong implementation.
+When an old file has to be opened, open the path in the **Code map** of `legacy.md`. Do not search `old/`, `legacy/`, or `old code/` for a similar class. A path under **Do not open** is the wrong implementation.
 
 Run these four steps in order. Do not cross-check, and do not write the report, until steps 1 and 2 are done. This pass does not edit code. A form fix is a separate command, `/proceso-field-fix`.
 
@@ -56,8 +56,8 @@ If `model-result/<processNumber>/filed-validation/report.md` already exists, thi
 ## Steps
 
 ```
-- [ ] Stop unless the parent contains .cursor and the old code in old/ or legacy/
-- [ ] Search the parent for tramites/<processNumber>; ask if the match is missing or not unique
+- [ ] Stop unless the parent contains .cursor and the old code in old/, legacy/, or old code/
+- [ ] Search the parent for tramites/<processNumber>, including inside new code/; ask if the match is missing or not unique
 - [ ] Ask for the process number when the message does not include one
 - [ ] Stop if .cursor/knowledge/procesos/<processNumber>/legacy.md is missing
 - [ ] Read .cursor/knowledge/legacy-base/architecture.md

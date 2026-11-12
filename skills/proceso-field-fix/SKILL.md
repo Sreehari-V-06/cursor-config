@@ -14,9 +14,9 @@ disable-model-invocation: true
 
 This skill is a frontend command. It edits the new form. It does not fix a backend GitHub issue. That command is `/github-ticket-fix-backend`.
 
-The parent folder must contain `.cursor/` and the old code in `old/` or `legacy/`. Letter case does not matter. If neither old-code folder is present, stop. This command does not edit that old code.
+The parent folder must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Letter case does not matter. If none of those folders is present, stop. This command does not edit that old code.
 
-The process folder to edit is the **Migrated tree** in the report. When that path is not on this machine, search the parent for `tramites/<processNumber>`. One match: use it. More than one: list the paths and ask. Stop. None: ask for the path and stop. The new backend may be absent. Do not stop because it is missing.
+The process folder to edit is the **Migrated tree** in the report. When that path is not on this machine, search the parent for `tramites/<processNumber>`, including inside a folder named `new code/`. One match: use it. More than one: list the paths and ask. Stop. None: ask for the path and stop. The new backend may be absent. Do not stop because it is missing.
 
 This command edits the migrated form. It does not write a new validation report. It does not re-grade fields.
 

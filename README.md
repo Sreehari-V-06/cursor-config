@@ -1,8 +1,8 @@
 # VUCEM Cursor setup
 
-This folder is the shared Cursor setup for everyone on this project, backend and frontend. The same `.cursor` is cloned into each developer's parent folder. That parent is the folder opened in Cursor. Its name can be anything. Two things inside it are required: `.cursor/` and the old code. The old code is either `old/` or `legacy/`. Letter case does not matter. A developer does not need both.
+This folder is the shared Cursor setup for everyone on this project, backend and frontend. The same `.cursor` is cloned into each developer's parent folder. That parent is the folder opened in Cursor. Its name can be anything. Two things inside it are required: `.cursor/` and the old code. The old code is `old/`, `legacy/`, or `old code/`. Letter case does not matter. A developer needs only one of those.
 
-The new form and the new backend are not part of that pair. A developer may have neither. When they are present, their paths differ by machine.
+The new form and the new backend are not part of that pair. A developer may have neither. When they are present, they may sit in a folder named `new code/`, or at another path in the parent.
 
 ## Initial setup
 
@@ -17,17 +17,18 @@ Every developer opens a parent folder like this:
 
 ```
 <parent folder>/
-  .cursor/                 required
-  old/        or  legacy/  required, one of these
+  .cursor/                              required
+  old/   or  legacy/   or  old code/    required, one of these
+  new code/                             optional
 ```
 
-If neither `old/` nor `legacy/` is there, stop. Say the parent must contain `.cursor/` and the old code in `old/` or `legacy/`. Do not look for the old code anywhere else in the parent.
+If none of `old/`, `legacy/`, or `old code/` is there, stop. Say the parent must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Do not look for the old code anywhere else in the parent.
 
 `/legacy-proceso-knowledge-base` reads that old code. It does not need the new form or the new backend.
 
-The form commands also need the new form folder for that process. One example is `Project/frontend/apps/agace/src/app/application/tramites/32515/`. Another machine uses a different path. Those commands look for `tramites/<process number>` inside the parent.
+The form commands also need the new form folder for that process. One example is `Project/frontend/apps/agace/src/app/application/tramites/32515/`. Another machine keeps that form under `new code/`. Those commands look for `tramites/<process number>` inside the parent, including inside `new code/`.
 
-`/github-ticket-fix-backend` reads the old Java inside `old/` or `legacy/`, and the new backend module for that process. A folder named `ms-sat-t<process number>` is one example of the new module. It does not need the form.
+`/github-ticket-fix-backend` reads the old Java inside `old/`, `legacy/`, or `old code/`, and the new backend module for that process. A folder named `ms-sat-t<process number>` is one example of the new module. It may sit under `new code/`. It does not need the form.
 
 When a search finds one match, use it. When it finds more than one, ask which path. When it finds none, ask for the path.
 
@@ -39,7 +40,7 @@ When a search finds one match, use it. When it finds more than one, ask which pa
 
 #### `/legacy-proceso-knowledge-base`
 
-Builds or corrects the notes for one process from the old code in `old/` or `legacy/`. Anyone with that folder can run it. The new form and the new backend may be absent.
+Builds or corrects the notes for one process from the old code in `old/`, `legacy/`, or `old code/`. Anyone with that folder can run it. The new form and the new backend may be absent. When they are present, they may sit under `new code/`.
 
 The notes are a map to the correct old file and method. The old tree has many similar classes, and a search can open the wrong one. Later commands open the files named in that map. They do not search the whole old tree.
 
@@ -75,7 +76,7 @@ Edits only the rows you marked in that report. Run validation first. If the repo
 
 Fixes one GitHub issue in the backend only. Give the issue URL or number in the message. If that is missing, the command asks and stops. A form check stays on `/proceso-field-validation`. A form fix stays on `/proceso-field-fix`. The frontend trees may be absent. This command does not look for them.
 
-It reads the issue, takes the process number, reads `.cursor/knowledge/legacy-base/architecture.md` and `.cursor/knowledge/procesos/<process number>/legacy.md` when that file exists, then compares the old Java inside `old/` or `legacy/` with the new backend module for that process. It edits only that new module. It does not edit the form, the old code, a sibling process, or a shared service unless you choose **Allow** for a shared backend module. It does not open a pull request or commit. If the old Java or the new module is missing, or more than one folder matches, it asks for the path.
+It reads the issue, takes the process number, reads `.cursor/knowledge/legacy-base/architecture.md` and `.cursor/knowledge/procesos/<process number>/legacy.md` when that file exists, then compares the old Java inside `old/`, `legacy/`, or `old code/` with the new backend module for that process. That module may sit under `new code/`. It edits only that new module. It does not edit the form, the old code, a sibling process, or a shared service unless you choose **Allow** for a shared backend module. It does not open a pull request or commit. If the old Java or the new module is missing, or more than one folder matches, it asks for the path.
 
 ## How to choose rows
 
