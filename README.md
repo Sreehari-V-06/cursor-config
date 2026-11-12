@@ -1,47 +1,57 @@
-# VUCEM field check
+# VUCEM Cursor setup
 
-This folder is the shared Cursor setup for comparing one trámite’s old page with its new form.
-Initial setup
+This folder is the shared Cursor setup for everyone on this project, backend and frontend. The same `.cursor` is cloned into each developer's parent folder. That parent is the folder opened in Cursor. Its name can be anything. Two things inside it are required: `.cursor/` and the old code. The old code is either `old/` or `legacy/`. Letter case does not matter. A developer does not need both.
+
+The new form and the new backend are not part of that pair. A developer may have neither. When they are present, their paths differ by machine.
+
+## Initial setup
 
 Clone the shared Cursor configuration repository inside your project’s parent folder:
 
 git clone https://github.com/Sreehari-V-06/cursor-config.git .cursor
 
 Important: Run this command from the parent folder where you want to work. It automatically creates the .cursor folder containing the shared rules, knowledge, and skills.
-Open the parent folder in Cursor. The parent folder can have any name. These paths have to sit inside it:
+Open the parent folder in Cursor. The parent folder can have any name.
+
+Every developer opens a parent folder like this:
 
 ```
-<open folder>/
-  .cursor/                      ← this setup
-  legacy/vuc_mtto_aga2/         ← old process modules
-  legacy/vuc_mtto_commons/      ← old shared platform
-  Project/frontend/             ← new form
+<parent folder>/
+  .cursor/                 required
+  old/        or  legacy/  required, one of these
 ```
 
-A trámite in the new form lives at `Project/frontend/**/tramites/<process number>/`. For 32515 that is `Project/frontend/apps/agace/src/app/application/tramites/32515/`. Another department uses its own app folder under the same `Project/frontend`.
+If neither `old/` nor `legacy/` is there, stop. Say the parent must contain `.cursor/` and the old code in `old/` or `legacy/`. Do not look for the old code anywhere else in the parent.
 
-If the old code or the new code already lives somewhere else, link it in under these names. On Windows:
+`/legacy-proceso-knowledge-base` reads that old code. It does not need the new form or the new backend.
 
-```
-mklink /J legacy D:\src\old-vucem
-mklink /J Project D:\src\new-code
-```
+The form commands also need the new form folder for that process. One example is `Project/frontend/apps/agace/src/app/application/tramites/32515/`. Another machine uses a different path. Those commands look for `tramites/<process number>` inside the parent.
 
-`Project\frontend` has to exist inside the new-code tree. The commands look only inside the open folder. They stop and name any path that is missing.
+`/github-ticket-fix-backend` reads the old Java inside `old/` or `legacy/`, and the new backend module for that process. A folder named `ms-sat-t<process number>` is one example of the new module. It does not need the form.
+
+When a search finds one match, use it. When it finds more than one, ask which path. When it finds none, ask for the path.
 
 ## Commands
 
-Run them from the Cursor chat, in this order. Each command asks for the process number when the message does not include one.
+`/legacy-proceso-knowledge-base` is for anyone who has the old code. The form commands are for the frontend. `/github-ticket-fix-backend` is for the backend. A command does not look for a tree it does not use.
 
-### 1. `/legacy-proceso-knowledge-base`
+### Shared
 
-Builds the notes for one process from the old code. It asks for the process number, then the old controller class or path.
+#### `/legacy-proceso-knowledge-base`
 
-It writes `.cursor/knowledge/procesos/<process number>/legacy.md`. It does not edit Java, JSP, or JS. Skip this command when that file is already in the clone.
+Builds or corrects the notes for one process from the old code in `old/` or `legacy/`. Anyone with that folder can run it. The new form and the new backend may be absent.
 
-### 2. `/proceso-field-validation`
+The notes are a map to the correct old file and method. The old tree has many similar classes, and a search can open the wrong one. Later commands open the files named in that map. They do not search the whole old tree.
 
-Compares those notes with the new form. It does not edit the form.
+It asks for the process number, then the old controller class or path. It writes `.cursor/knowledge/procesos/<process number>/legacy.md`. It does not edit Java, JSP, or JS. Run it again to correct a wrong file or to add a behavior the map does not list yet. A later command may add one confirmed row. It does not replace the rest of the file.
+
+### Frontend
+
+Run these two from the Cursor chat, in this order. Each asks for the process number when the message does not include one. Run `/legacy-proceso-knowledge-base` first when that process has no `legacy.md`.
+
+#### `/proceso-field-validation`
+
+Compares those notes with the new form. It does not edit the form. It does not fix a backend issue. That command is `/github-ticket-fix-backend`.
 
 It writes `model-result/<process number>/filed-validation/report.md` in the open folder. Run it again after a fix: it updates that same file and moves a fixed row to **Corrected**.
 
@@ -55,9 +65,17 @@ The report counts are:
 | Incomplete | Part of the check is present, and the same values still pass and fail |
 | Missing | The old page has this check and the new page does not |
 
-### 3. `/proceso-field-fix`
+#### `/proceso-field-fix`
 
-Edits only the rows you marked in that report. Run validation first. If the report is missing, this command stops.
+Edits only the rows you marked in that report. Run validation first. If the report is missing, this command stops. This is the form fix. A backend GitHub issue stays on `/github-ticket-fix-backend`.
+
+### Backend
+
+#### `/github-ticket-fix-backend`
+
+Fixes one GitHub issue in the backend only. Give the issue URL or number in the message. If that is missing, the command asks and stops. A form check stays on `/proceso-field-validation`. A form fix stays on `/proceso-field-fix`. The frontend trees may be absent. This command does not look for them.
+
+It reads the issue, takes the process number, reads `.cursor/knowledge/legacy-base/architecture.md` and `.cursor/knowledge/procesos/<process number>/legacy.md` when that file exists, then compares the old Java inside `old/` or `legacy/` with the new backend module for that process. It edits only that new module. It does not edit the form, the old code, a sibling process, or a shared service unless you choose **Allow** for a shared backend module. It does not open a pull request or commit. If the old Java or the new module is missing, or more than one folder matches, it asks for the path.
 
 ## How to choose rows
 
@@ -69,7 +87,7 @@ Then run `/proceso-field-fix` and give the process number.
 
 ## What a fix is allowed to change
 
-A fix is written only inside that process’s folder under `Project/frontend`. The agace path above is one example. The same limit applies to every process in every department.
+A fix is written only inside that process’s form folder. `Project/frontend/apps/agace/src/app/application/tramites/32515/` is one example. The same limit applies to every process in every department, wherever that folder sits.
 
 The command does not edit shared pieces such as `formas-dinamicas`, `input-fecha`, catalog selects, or `libs/shared`. It does not edit the old Java, JSP, or JS, and it does not edit another process.
 

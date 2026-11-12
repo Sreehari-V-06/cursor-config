@@ -2,6 +2,8 @@
 
 Legacy knowledge base. Source of truth for this trámite only. Built from the controller `<ClassName>`.
 
+Open the files in **Code map**. Do not search `old/` or `legacy/` for another class with a similar name. A path under **Do not open** is the wrong implementation.
+
 ## Identity
 
 - Process number: `<number>`
@@ -12,6 +14,14 @@ Legacy knowledge base. Source of truth for this trámite only. Built from the co
 - Session key: `<constant = value>`
 - Spring bean (solicitud): `<bean name>` in `<xml path>`
 - Module pom base artifact: `<artifact>` — commons tree used: `<path>`
+
+## Code map
+
+One row per behavior this process runs. **File** is the implementation for this process number. **Do not open** is a sibling or a parent that looks alike.
+
+| Behavior | Class | Method | File | Do not open |
+| --- | --- | --- | --- | --- |
+| `<what this process does>` | `<class>` | `<method>` | `<path>` | `<sibling path, or Not found>` |
 
 ## Controllers
 

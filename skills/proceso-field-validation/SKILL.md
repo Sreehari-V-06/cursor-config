@@ -1,28 +1,27 @@
 ---
 name: proceso-field-validation
 description: >
-  Runs process field validation only when that process already has a knowledge
-  base at .cursor/knowledge/procesos/<number>/legacy.md. Order: common legacy
-  architecture, then that process file, then a cross-check against the migrated
-  frontend, then a report of missing, incomplete, and incorrect checks. After
-  the report, the user marks Fix on the rows to change. Use when the user
-  invokes /proceso-field-validation or asks to validate again after fixes.
-  Do not use this skill to build the process knowledge base or to edit the form.
-  The form fix is /proceso-field-fix.
+  Frontend command. Runs process field validation only when that process
+  already has a knowledge base at .cursor/knowledge/procesos/<number>/legacy.md.
+  Order: common legacy architecture, then that process file, then a cross-check
+  against the migrated frontend, then a report of missing, incomplete, and
+  incorrect checks. After the report, the user marks Fix on the rows to change.
+  Use when the user invokes /proceso-field-validation or asks to validate the
+  form again after fixes. Do not use this skill to build the process knowledge
+  base, to edit the form, or to fix a backend GitHub issue. The form fix is
+  /proceso-field-fix. The backend fix is /github-ticket-fix-backend.
 disable-model-invocation: true
 ---
 
 # Process field validation
 
-This skill runs only when the open folder contains the trees below. The folder name does not matter. Check that before asking questions or reading code. If any path is missing, stop. Name each missing path. Tell the user to put these next to each other in the open folder. Do not search outside that folder.
+This skill is a frontend command. It compares the old page with the new form. It does not fix a backend GitHub issue. That command is `/github-ticket-fix-backend`.
 
-```
-<open folder>/
-  .cursor/
-  legacy/vuc_mtto_aga2/
-  legacy/vuc_mtto_commons/
-  Project/frontend/
-```
+The parent folder must contain `.cursor/` and the old code in `old/` or `legacy/`. Letter case does not matter. If neither old-code folder is present, stop. This command does not read that old tree. The inventory is `.cursor/knowledge/procesos/<processNumber>/legacy.md`.
+
+It also needs the new form folder for this process. Search the parent for `tramites/<processNumber>`. `Project/frontend/apps/agace/src/app/application/tramites/32515/` is one example. One match: use it. More than one: list the paths and ask which tree to use. Stop. None: ask for the path and stop. The new backend may be absent. Do not stop because it is missing.
+
+When an old file has to be opened, open the path in the **Code map** of `legacy.md`. Do not search `old/` or `legacy/` for a similar class. A path under **Do not open** is the wrong implementation.
 
 Run these four steps in order. Do not cross-check, and do not write the report, until steps 1 and 2 are done. This pass does not edit code. A form fix is a separate command, `/proceso-field-fix`.
 
@@ -38,7 +37,7 @@ Ask for the process number only. Do not ask for the old-code controller.
 1. If the user has not given a **process number**, ask for it and stop.
 2. As soon as the process number is known, check that `.cursor/knowledge/procesos/<processNumber>/legacy.md` exists. If it does not, stop. This skill is not allowed without that knowledge base. Do not offer to build it here.
 
-The migrated tree is optional. Search `Project/frontend/**/tramites/<processNumber>` when the user does not give a path. If that search returns more than one folder, list the paths and ask which tree to use. If it returns none, ask for the path.
+The migrated tree is the form folder found above. When the user gives a path, use that path after confirming it is this process.
 
 Confirm the migrated tree is this process: the folder name, a route, or a procedure id constant equals the process number. If it does not, stop and report both values.
 
@@ -57,7 +56,8 @@ If `model-result/<processNumber>/filed-validation/report.md` already exists, thi
 ## Steps
 
 ```
-- [ ] Stop unless the open folder contains .cursor, legacy/vuc_mtto_aga2, legacy/vuc_mtto_commons, and Project/frontend
+- [ ] Stop unless the parent contains .cursor and the old code in old/ or legacy/
+- [ ] Search the parent for tramites/<processNumber>; ask if the match is missing or not unique
 - [ ] Ask for the process number when the message does not include one
 - [ ] Stop if .cursor/knowledge/procesos/<processNumber>/legacy.md is missing
 - [ ] Read .cursor/knowledge/legacy-base/architecture.md

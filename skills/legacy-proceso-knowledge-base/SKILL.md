@@ -1,24 +1,26 @@
 ---
 name: legacy-proceso-knowledge-base
 description: >
-  Builds a legacy knowledge base for one VUCEM trámite from its process number
-  and controller. Use when the user gives a process number (such as 32515) and
-  a controller class or path and asks for a knowledge base, process map, or
-  legacy field and validation inventory. Read-only on Java, JSP, JS, and Spring XML.
+  Builds or corrects the process knowledge base so a later agent can open the
+  correct old file without searching the whole old tree. Use when anyone who
+  has the old code gives a process number (such as 32515) and a controller
+  class or path and asks for a knowledge base, process map, or legacy field
+  and validation inventory. The old code is under old/ or legacy/. Read-only
+  on Java, JSP, JS, and Spring XML. Do not use this skill to validate the form
+  or to fix a backend GitHub issue. Form validation is
+  /proceso-field-validation. The backend fix is /github-ticket-fix-backend.
 disable-model-invocation: true
 ---
 
 # Legacy process knowledge base
 
-This skill runs only when the open folder contains the trees below. The folder name does not matter. Check that before asking questions or reading code. If any path is missing, stop. Name each missing path. Tell the user to put these next to each other in the open folder. Do not search outside that folder.
+This skill writes `.cursor/knowledge/procesos/<processNumber>/legacy.md` for one process. The old tree is large, and a similar class in a sibling trámite is the wrong implementation. The knowledge base exists so a later agent opens the file and method this process actually runs, and does not search `old/` or `legacy/` for another match.
 
-```
-<open folder>/
-  .cursor/
-  legacy/vuc_mtto_aga2/
-  legacy/vuc_mtto_commons/
-  Project/frontend/
-```
+A backend developer and a frontend developer both use it. It does not validate the form. It does not fix a backend GitHub issue. Those commands are `/proceso-field-validation` and `/github-ticket-fix-backend`. They read this file first.
+
+The parent folder is the folder opened in Cursor. It must contain `.cursor/` and the old code. The old code is `old/` or `legacy/`. Letter case does not matter. One of those is enough. If neither is present, stop. Say the parent must contain `.cursor/` and the old code in `old/` or `legacy/`. Do not look for the old code anywhere else.
+
+The new form and the new backend may be absent. Do not stop because they are missing. Do not search for them.
 
 Build one knowledge base for the legacy trámite the user names. Read code. Do not edit Java, JSP, JS, or Spring XML.
 
@@ -34,16 +36,17 @@ If the invoking message already contains both, do not ask again. Use those value
 1. Knowledge base: `.cursor/knowledge/procesos/<processNumber>/legacy.md`
    Fill [template.md](template.md). Replace every placeholder. Delete none of its sections.
 2. Index rule: the existing `.cursor/rules/proceso-<processNumber>*.mdc`, or `.cursor/rules/proceso-<processNumber>.mdc` when none exists.
-   `alwaysApply: false`. Globs cover the process package, its JSP and JS trees, and the knowledge base path. The rule body is only the identity block from the template plus the instruction to read the knowledge base before changing the trámite. One rule per process number. Do not add a second file beside an existing `proceso-<processNumber>*.mdc`.
+   `alwaysApply: false`. Globs cover the process package, its JSP and JS trees, and the knowledge base path. The rule body is only the identity block from the template plus two instructions: read the knowledge base before changing the trámite, and open only the files named in its code map. One rule per process number. Do not add a second file beside an existing `proceso-<processNumber>*.mdc`.
 
-If either file already exists, refresh it from the code. Keep a sentence only when this pass still finds the evidence. Do not leave a claim from an older pass that this pass did not confirm.
+If `legacy.md` already exists, correct it. A **File** cell that points at a sibling or at a parent this process does not run is wrong: replace it with the implementation this pass proved, and put the rejected path in **Do not open**. Add a row for a behavior this pass confirmed and the map did not list. Keep a row this pass did not re-check. Do not drop a confirmed path because a wider search found a similar class.
 
 ## Steps
 
 Copy this checklist and mark each item as you finish it:
 
 ```
-- [ ] Stop unless the open folder contains .cursor, legacy/vuc_mtto_aga2, legacy/vuc_mtto_commons, and Project/frontend
+- [ ] Stop unless the parent contains .cursor and the old code in old/ or legacy/
+- [ ] Do not stop because the new form or the new backend is missing
 - [ ] Ask for the process number when the message does not include one
 - [ ] Ask for the controller when the message does not include one
 - [ ] Read .cursor/knowledge/legacy-base/architecture.md
@@ -54,6 +57,8 @@ Copy this checklist and mark each item as you finish it:
 - [ ] Read the capture JSP and the JS it includes
 - [ ] Extract every live field and every dead selector
 - [ ] Extract role branches, submit scope, documents, persistence, reports
+- [ ] Write the code map: one correct file and method per behavior, siblings under Do not open
+- [ ] Correct a wrong File cell when legacy.md already exists, and add confirmed rows it lacks
 - [ ] Write legacy.md from the template
 - [ ] Write the index rule
 ```
@@ -68,9 +73,9 @@ Use the registro parent chain in that file only when the named controller extend
 
 ### 1. Resolve the controller
 
-A path is the file to open. A class name is a search for `legacy/**/<ClassName>.java`.
+A path is the file to open. A class name is a search for `<ClassName>.java` inside `old/` and `legacy/` only.
 
-Stop if the search returns more than one file. List the paths and ask which controller to use.
+One file: use it. More than one: list the paths and ask which controller to use. Stop. None: ask for the path and stop. Do not search the rest of the parent.
 
 ### 2. Prove the process number
 
@@ -84,11 +89,11 @@ From the registro controller, record the service returned by `getRegistroSolicit
 
 Follow a method only when this class calls it. An import that is never referenced is unused. Say so, and do not document that type as a dependency.
 
-Sibling process numbers in the same parent folder are other trámites. Name them under **Do not use**. Do not open their services or rules to fill this knowledge base.
+Sibling process numbers in the same parent folder are other trámites. Name them under **Do not use**. Do not open their services or rules to fill this knowledge base. A class with a similar name in a sibling package is the wrong implementation. Record that path in the code map under **Do not open**.
 
 ### 4. Commons parent
 
-Read the module `pom.xml` and record the base `artifactId`. That artifact must match one tree named in `.cursor/knowledge/legacy-base/architecture.md`. Open only that tree. Do not describe a method from another tree.
+Read the module `pom.xml` and record the base `artifactId`. That artifact must match one tree named in `.cursor/knowledge/legacy-base/architecture.md`. That file may say `legacy/vuc_mtto_commons/base-jms-ibm`. On this machine the same module is under `old/` or `legacy/`. Open the copy in the old-code folder already chosen. One match: open it. More than one: list the paths and ask. Stop. None: ask for the path and stop. Open only that tree. Do not describe a method from another tree.
 
 For each method the architecture file lists on the controller, service, and rules parents, write one line: `not overridden`, or `overridden — <effect>`. Cite the process class that overrides it. Do not paste parent source. Do not copy the variant list, the stripes contract, or the `parentSelectName` contract into the process file. A tab switch before Guardar is process behavior: record it under **Submit validation** only when this trámite’s script does it.
 
@@ -113,6 +118,15 @@ Record, with the file that implements each one:
 - The helper mapping from the request parameter to the persisted property
 - Which report bean is chosen, and the condition
 
+## Code map
+
+Fill the **Code map** section of [template.md](template.md). One row per behavior this process runs. Start from the controller the user named and follow only the methods that class calls.
+
+- **File** is the class that implements that behavior for this process number, and the method on it.
+- A commons parent is **File** only when this process does not override the method and `.cursor/knowledge/legacy-base/architecture.md` says that parent applies. When this process overrides it, **File** is the override.
+- **Do not open** is a sibling or a parent that looks alike and is not this process's implementation. Use `Not found` when there is no such lookalike.
+- Do not add a row from a search that matched only by class name.
+
 ## Evidence
 
 Every filled cell cites a path. Use `Not found` when the code does not say. Do not infer a maxlength, a regex, or a required flag from a sibling trámite or from a label asterisk alone. A `class="required"` is evidence. An asterisk without that class is a label, and the row says so.
@@ -131,4 +145,4 @@ A field row that meets the bar:
 
 ## After writing
 
-Tell the user the two paths and list every section whose cells are `Not found`. Do not start a frontend comparison in this skill. Field validation against the migrated tree is the `proceso-field-validation` skill, and it requires this `legacy.md`.
+Tell the user the two paths, the code-map rows, and every section whose cells are `Not found`. Do not start a form comparison or a backend fix in this skill. Later commands open the code-map files. They add one row when they confirm a file the map does not list. They do not search the whole old tree.

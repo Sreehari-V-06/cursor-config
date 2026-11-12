@@ -1,24 +1,22 @@
 ---
 name: proceso-field-fix
 description: >
-  Fixes only the rows whose Fix cell has an x inside the brackets, such as
-  `- [x]` or `- [ x]`, in model-result/<processNumber>/filed-validation/report.md. Use when the user
-  invokes /proceso-field-fix. Do not use this skill to validate a process or
-  to build the legacy knowledge base. Do not fix a row that is still `- [ ]`.
+  Frontend command. Fixes only the rows whose Fix cell has an x inside the
+  brackets, such as `- [x]` or `- [ x]`, in
+  model-result/<processNumber>/filed-validation/report.md. Use when the user
+  invokes /proceso-field-fix. Do not use this skill to validate a process, to
+  build the legacy knowledge base, or to fix a backend GitHub issue. Do not
+  fix a row that is still `- [ ]`. The backend fix is /github-ticket-fix-backend.
 disable-model-invocation: true
 ---
 
 # Fix the marked rows
 
-This skill runs only when the open folder contains the trees below. The folder name does not matter. Check that before asking questions or editing. If any path is missing, stop. Name each missing path. Tell the user to put these next to each other in the open folder. Do not search outside that folder.
+This skill is a frontend command. It edits the new form. It does not fix a backend GitHub issue. That command is `/github-ticket-fix-backend`.
 
-```
-<open folder>/
-  .cursor/
-  legacy/vuc_mtto_aga2/
-  legacy/vuc_mtto_commons/
-  Project/frontend/
-```
+The parent folder must contain `.cursor/` and the old code in `old/` or `legacy/`. Letter case does not matter. If neither old-code folder is present, stop. This command does not edit that old code.
+
+The process folder to edit is the **Migrated tree** in the report. When that path is not on this machine, search the parent for `tramites/<processNumber>`. One match: use it. More than one: list the paths and ask. Stop. None: ask for the path and stop. The new backend may be absent. Do not stop because it is missing.
 
 This command edits the migrated form. It does not write a new validation report. It does not re-grade fields.
 
