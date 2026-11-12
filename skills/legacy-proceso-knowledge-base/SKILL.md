@@ -6,10 +6,11 @@ description: >
   has the old code gives a process number (such as 32515) and a controller
   class or path and asks for a knowledge base, process map, or legacy field
   and validation inventory. The old code is under old/, legacy/, or old code/.
-  Read-only
-  on Java, JSP, JS, and Spring XML. Do not use this skill to validate the form
-  or to fix a backend GitHub issue. Form validation is
-  /proceso-field-validation. The backend fix is /github-ticket-fix-backend.
+  Open every dialog the capture page opens and write one field row per input
+  inside it, from that dialog’s JSP and validate(). Read-only on Java, JSP, JS,
+  and Spring XML. Do not use this skill to validate the form or to fix a
+  backend GitHub issue. Form validation is /proceso-field-validation. The
+  backend fix is /github-ticket-fix-backend.
 disable-model-invocation: true
 ---
 
@@ -19,7 +20,7 @@ This skill writes `.cursor/knowledge/procesos/<processNumber>/legacy.md` for one
 
 A backend developer and a frontend developer both use it. It does not validate the form. It does not fix a backend GitHub issue. Those commands are `/proceso-field-validation` and `/github-ticket-fix-backend`. They read this file first.
 
-The parent folder is the folder opened in Cursor. It must contain `.cursor/` and the old code. The old code is `old/`, `legacy/`, or `old code/`. Letter case does not matter. One of those is enough. If none of them is present, stop. Say the parent must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Do not look for the old code anywhere else.
+The parent folder is the folder opened in Cursor. It must contain `.cursor/` and the old code. The old code is `old/`, `legacy/`, or `old code/`. Letter case does not matter. One of those is enough. Check that before asking questions or reading code. If none of them is present, stop and name the missing path. Say the parent must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Do not look for the old code anywhere else. Do not search outside that folder.
 
 The new form and the new backend may be absent. When they are present, they may sit in a folder named `new code/`. Do not stop because they are missing. Do not search for them.
 
@@ -39,14 +40,14 @@ If the invoking message already contains both, do not ask again. Use those value
 2. Index rule: the existing `.cursor/rules/proceso-<processNumber>*.mdc`, or `.cursor/rules/proceso-<processNumber>.mdc` when none exists.
    `alwaysApply: false`. Globs cover the process package, its JSP and JS trees, and the knowledge base path. The rule body is only the identity block from the template plus two instructions: read the knowledge base before changing the trámite, and open only the files named in its code map. One rule per process number. Do not add a second file beside an existing `proceso-<processNumber>*.mdc`.
 
-If `legacy.md` already exists, correct it. A **File** cell that points at a sibling or at a parent this process does not run is wrong: replace it with the implementation this pass proved, and put the rejected path in **Do not open**. Add a row for a behavior this pass confirmed and the map did not list. Keep a row this pass did not re-check. Do not drop a confirmed path because a wider search found a similar class.
+If either file already exists, refresh it from the code. Outside the code map, keep a sentence only when this pass still finds the evidence. Do not leave a claim from an older pass that this pass did not confirm. Inside the code map, a **File** cell that points at a sibling or at a parent this process does not run is wrong: replace it with the implementation this pass proved, and put the rejected path in **Do not open**. Add a row for a behavior this pass confirmed and the map did not list. Keep a code-map row this pass did not re-check. Do not drop a confirmed path because a wider search found a similar class.
 
 ## Steps
 
 Copy this checklist and mark each item as you finish it:
 
 ```
-- [ ] Stop unless the parent contains .cursor and the old code in old/, legacy/, or old code/
+- [ ] Before asking, stop and name the missing path unless the parent contains .cursor and the old code in old/, legacy/, or old code/
 - [ ] Do not stop because the new form or the new backend is missing
 - [ ] Ask for the process number when the message does not include one
 - [ ] Ask for the controller when the message does not include one
@@ -56,10 +57,11 @@ Copy this checklist and mark each item as you finish it:
 - [ ] Bind service, rules, repository, helper, entity
 - [ ] Confirm the module pom artifact against the architecture file
 - [ ] Read the capture JSP and the JS it includes
-- [ ] Extract every live field and every dead selector
+- [ ] Open every dialog those pages open, and the JSP and validate() for each dialog, to the last line
+- [ ] Extract every live field and every dead selector, including every field inside each dialog
 - [ ] Extract role branches, submit scope, documents, persistence, reports
 - [ ] Write the code map: one correct file and method per behavior, siblings under Do not open
-- [ ] Correct a wrong File cell when legacy.md already exists, and add confirmed rows it lacks
+- [ ] Refresh an existing file from the code: drop a non-map claim this pass did not confirm, correct a wrong File cell, add confirmed rows it lacks, and keep a code-map row this pass did not re-check
 - [ ] Write legacy.md from the template
 - [ ] Write the index rule
 ```
@@ -102,9 +104,13 @@ For each method the architecture file lists on the controller, service, and rule
 
 From the controller and its JSP constants, open the capture JSP and every JSP it includes for this process. Open each script tag under this process’s JS folder. Ignore a script that no JSP for this process includes.
 
+Open every dialog the capture page or those scripts open. That includes a JSP a script loads into a dialog, a hidden dialog div, and the `validate()` function that dialog calls. Read each of those files to the last line. A dialog is part of this process. Do not stop at the main wizard. Related dialogs stay separate: an agent dialog, an apoderado dialog, and an agency dialog are three forms.
+
 ### 6. Fields
 
-One row per input, select, or textarea that is rendered. Read the attributes and the JS that touches that id. Column rules are in the template.
+One row per input, select, or textarea that is rendered, including every input inside a dialog. Read the attributes and the JS that touches that id. Column rules are in the template.
+
+Do not collapse a dialog into one summary line. Two dialogs that share a label are two rows. Name the dialog in Evidence. A summary that disagrees with the dialog JSP or its `validate()` is not the rule. Write the row from those files.
 
 Also list selectors that JS marks required or validates when no element with that id exists in the capture JSP. Those rows go under **Dead selectors**, not under **Fields**.
 
@@ -146,4 +152,4 @@ A field row that meets the bar:
 
 ## After writing
 
-Tell the user the two paths, the code-map rows, and every section whose cells are `Not found`. Do not start a form comparison or a backend fix in this skill. Later commands open the code-map files. They add one row when they confirm a file the map does not list. They do not search the whole old tree.
+Tell the user the two paths, the code-map rows, and every section whose cells are `Not found`. Name every dialog that was opened. If the capture page has no dialog, say so. Do not start a form comparison, a frontend comparison, or a backend fix in this skill. Later commands open the code-map files. They add one row when they confirm a file the map does not list. They do not search the whole old tree. Field validation against the migrated tree is the `proceso-field-validation` skill, and it requires this `legacy.md`.

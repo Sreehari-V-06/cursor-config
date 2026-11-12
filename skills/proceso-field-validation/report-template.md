@@ -22,7 +22,7 @@ To choose a fix, put `x` inside that row’s brackets (`- [x]` or `- [ x]`), sav
 
 ## UI behavior
 
-What stays on screen, what is hidden, what can be typed, and which headings change. One row per item. The seven rows that only repeat an Incorrect finding are not counted again.
+What stays on screen, what is hidden, what can be typed, and which headings change, on the main screen and inside every modal. One row per item. **Tab** is the tab that opens a modal. **Section** is the dialog title. The seven rows that only repeat an Incorrect finding are not counted again.
 
 Paths under **Where to change** start at the migrated tree. Name the file, the field or method, and the change. Write `No change` on a Match row.
 

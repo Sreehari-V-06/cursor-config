@@ -22,15 +22,15 @@ Every developer opens a parent folder like this:
   new code/                             optional
 ```
 
-If none of `old/`, `legacy/`, or `old code/` is there, stop. Say the parent must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. Do not look for the old code anywhere else in the parent.
+Check that before asking questions or reading code. If none of `old/`, `legacy/`, or `old code/` is there, stop and name the missing path. Say the parent must contain `.cursor/` and the old code in `old/`, `legacy/`, or `old code/`. The commands look only inside the open folder. Do not look for the old code anywhere else in the parent.
 
 `/legacy-proceso-knowledge-base` reads that old code. It does not need the new form or the new backend.
 
-The form commands also need the new form folder for that process. One example is `Project/frontend/apps/agace/src/app/application/tramites/32515/`. Another machine keeps that form under `new code/`. Those commands look for `tramites/<process number>` inside the parent, including inside `new code/`.
+The form commands also need the new form folder for that process. One example is `Project/frontend/apps/agace/src/app/application/tramites/32515/`. Another department uses its own app folder under `Project/frontend`. Another machine keeps that form under `new code/`. When the message does not give a path, those commands look for `tramites/<process number>` inside the parent, including `Project/frontend/**/tramites/<process number>` and `new code/`.
 
 `/github-ticket-fix-backend` reads the old Java inside `old/`, `legacy/`, or `old code/`, and the new backend module for that process. A folder named `ms-sat-t<process number>` is one example of the new module. It may sit under `new code/`. It does not need the form.
 
-When a search finds one match, use it. When it finds more than one, ask which path. When it finds none, ask for the path.
+When a search finds one match, use it. When it finds more than one, ask which path. When it finds none, name what is missing and ask for the path.
 
 ## Commands
 
@@ -42,9 +42,11 @@ When a search finds one match, use it. When it finds more than one, ask which pa
 
 Builds or corrects the notes for one process from the old code in `old/`, `legacy/`, or `old code/`. Anyone with that folder can run it. The new form and the new backend may be absent. When they are present, they may sit under `new code/`.
 
+It asks for the process number, then the old controller class or path. Every dialog the old page opens is included, one row per field, from that dialog’s page and its `validate()`. A dialog is not collapsed into one line.
+
 The notes are a map to the correct old file and method. The old tree has many similar classes, and a search can open the wrong one. Later commands open the files named in that map. They do not search the whole old tree.
 
-It asks for the process number, then the old controller class or path. It writes `.cursor/knowledge/procesos/<process number>/legacy.md`. It does not edit Java, JSP, or JS. Run it again to correct a wrong file or to add a behavior the map does not list yet. A later command may add one confirmed row. It does not replace the rest of the file.
+It writes `.cursor/knowledge/procesos/<process number>/legacy.md`. It does not edit Java, JSP, or JS. Run it again to correct a wrong file or to add a behavior the map does not list yet. A later command may add one confirmed row. It does not replace the rest of the file.
 
 ### Frontend
 
@@ -53,6 +55,8 @@ Run these two from the Cursor chat, in this order. Each asks for the process num
 #### `/proceso-field-validation`
 
 Compares those notes with the new form. It does not edit the form. It does not fix a backend issue. That command is `/github-ticket-fix-backend`.
+
+It starts at the route and opens every tab, every component those tabs declare, and every modal those components open. A field inside a modal is scored the same way as a field on the main screen, including its checks and its show, hide, enable, disable, and readonly behavior. The old dialog page and its `validate()` are the rule. A one-line note in the knowledge base is not. The report is written only after that list is finished.
 
 It writes `model-result/<process number>/filed-validation/report.md` in the open folder. Run it again after a fix: it updates that same file and moves a fixed row to **Corrected**.
 

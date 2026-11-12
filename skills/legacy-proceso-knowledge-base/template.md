@@ -113,7 +113,7 @@ If the capture has no such branch: `Not found`.
 
 ## Fields
 
-One row per rendered input, select, or textarea. `Not found` for a cell the code does not define. Cite the file in Evidence.
+One row per rendered input, select, or textarea, including every input inside a dialog. Do not replace a dialog with one summary line. Two dialogs that share a label are two rows. Name the dialog in Evidence. `Not found` for a cell the code does not define. Cite the file in Evidence.
 
 | UI label | DOM id | Request param | Model path | Required when | Max | Filter | Validator | Message | On failure | Server | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
