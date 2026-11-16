@@ -7,6 +7,7 @@ Open the files in **Code map**. Do not search `old/`, `legacy/`, or `old code/` 
 ## Identity
 
 - Process number: `<number>`
+- Surface: `<registration or workflow>`
 - Entity: `<class>` — `@DiscriminatorValue` evidence: `<path>`
 - Package: `<path>`
 - Registro URL: `<binding>`

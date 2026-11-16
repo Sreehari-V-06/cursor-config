@@ -1,0 +1,31 @@
+---
+description: Funcionario task workflow. Use when reading the inbox, lib-bandeja-tareas, a department evaluar tree, frontend-base, or a process frontend-workflow.md.
+globs:
+  - "Project/frontend/apps/dashboard/src/app/bandeja-tareas-pendientes/**"
+  - "Project/frontend/libs/shared/data-access-user/src/tramites/components/lib-bandeja-tareas/**"
+  - "Project/frontend/apps/**/evaluar/**"
+  - ".cursor/knowledge/frontend-base/**"
+  - ".cursor/knowledge/procesos/**/frontend-workflow.md"
+alwaysApply: false
+---
+
+# Funcionario workflow
+
+Read `.cursor/knowledge/frontend-base/workflow.md` before changing a funcionario task page.
+
+Stay inside the procedure list in that file. A procedure number that is not in the list is out of scope. Do not write a page body for it.
+
+The registro wizard (Capturar solicitud, Anexar requisitos, Firmar solicitud) is a different flow.
+
+A file inside `tramites/<procedure>/` may be edited directly.
+
+These six folders may also be edited directly. The parent evaluar page around them is not one of them and still needs Allow:
+
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_220102`
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_220103`
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_221601`
+- `Project/frontend/apps/agace/src/app/application/evaluar/dictamen317`
+- `Project/frontend/apps/agace/src/app/application/evaluar/dictamen-31803`
+- `Project/frontend/apps/aga/src/app/application/evaluar/dictamen-303`
+
+Ask Allow before editing `Project/frontend/libs/shared` (the inbox, ConsultaioStore, app-reviewers-tabs, solicitante, app-generar-dictamen, firma-electronica, and the wizard buttons) or a department task shell outside `tramites/<procedure>/`: evaluar, verificar-dictamen, autorizar-dictamen, autorizar-requerimiento, confirmar-notificacion, proceso-requerimiento, atender-requerimiento, and tramiteConfig.service.ts. Wait for Allow. Do not edit that file before the user chooses Allow.

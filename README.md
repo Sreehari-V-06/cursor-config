@@ -42,23 +42,23 @@ When a search finds one match, use it. When it finds more than one, ask which pa
 
 Builds or corrects the notes for one process from the old code in `old/`, `legacy/`, or `old code/`. Anyone with that folder can run it. The new form and the new backend may be absent. When they are present, they may sit under `new code/`.
 
-It asks for the process number, then the old controller class or path. Every dialog the old page opens is included, one row per field, from that dialog’s page and its `validate()`. A dialog is not collapsed into one line.
+It asks for the process number, then whether this pass is registration or workflow, then the old controller class or path. Registration is the registro wizard. Workflow is the funcionario task flow. Every dialog the old page opens is included, one row per field, from that dialog’s page and its `validate()`. A dialog is not collapsed into one line.
 
 The notes are a map to the correct old file and method. The old tree has many similar classes, and a search can open the wrong one. Later commands open the files named in that map. They do not search the whole old tree.
 
-It writes `.cursor/knowledge/procesos/<process number>/legacy.md`. It does not edit Java, JSP, or JS. Run it again to correct a wrong file or to add a behavior the map does not list yet. A later command may add one confirmed row. It does not replace the rest of the file.
+A registration pass writes `.cursor/knowledge/procesos/<process number>/legacy.md`. A workflow pass writes `.cursor/knowledge/procesos/<process number>/legacy-workflow.md`. One pass leaves the other file unchanged. If that surface’s file already exists, the command asks whether to create it again and does not rebuild until you say yes. It does not edit Java, JSP, or JS. A later command may add one confirmed row. It does not replace the rest of the file.
 
 ### Frontend
 
-Run these two from the Cursor chat, in this order. Each asks for the process number when the message does not include one. Run `/legacy-proceso-knowledge-base` first when that process has no `legacy.md`.
+Run these two from the Cursor chat, in this order. Each asks for the process number, then whether the pass is registration or workflow, when the message does not include them. Registration and workflow each need their own knowledge base. `legacy.md` is registration. `legacy-workflow.md` is workflow. One file does not cover the other. Run `/legacy-proceso-knowledge-base` first for the surface you chose. To validate both, build both files, then run `/proceso-field-validation` twice.
 
 #### `/proceso-field-validation`
 
-Compares those notes with the new form. It does not edit the form. It does not fix a backend issue. That command is `/github-ticket-fix-backend`.
+Compares those notes with the new form. It asks whether the pass is registration or workflow. Each surface reads its own knowledge base and writes its own report. A workflow pass also reads `.cursor/knowledge/frontend-base/workflow.md`. A registration pass does not. It does not edit the form. It does not fix a backend issue. That command is `/github-ticket-fix-backend`.
 
-It starts at the route and opens every tab, every component those tabs declare, and every modal those components open. A field inside a modal is scored the same way as a field on the main screen, including its checks and its show, hide, enable, disable, and readonly behavior. The old dialog page and its `validate()` are the rule. A one-line note in the knowledge base is not. The report is written only after that list is finished.
+It starts at the route and opens every tab, every component those tabs declare, and every modal those components open. A field inside a modal is scored the same way as a field on the main screen. On both registration and workflow, validation, logic, and UI behavior come from the old JSP, the old JavaScript (including regex and `validate()`), and the old `.properties` files (exact Spanish messages). The report has **JS rule** and **Spanish message** columns for those. A one-line note in the knowledge base is not the rule. The report is written only after that list is finished.
 
-It writes `model-result/<process number>/filed-validation/report.md` in the open folder. Run it again after a fix: it updates that same file and moves a fixed row to **Corrected**.
+A registration pass writes `model-result/<process number>/filed-validation/report.md`. A workflow pass writes `model-result/<process number>/workflow-validation/report.md`. Run it again after a fix: it updates the report for that surface and moves a fixed row to **Corrected**.
 
 The report counts are:
 
@@ -72,7 +72,28 @@ The report counts are:
 
 #### `/proceso-field-fix`
 
-Edits only the rows you marked in that report. Run validation first. If the report is missing, this command stops. This is the form fix. A backend GitHub issue stays on `/github-ticket-fix-backend`.
+Edits only the rows you marked in that report. It asks for the process number, then whether the pass is registration or workflow. A workflow pass also reads `.cursor/knowledge/frontend-base/workflow.md`. A registration pass does not. Run validation first. If the report is missing, this command stops. This is the form fix. A backend GitHub issue stays on `/github-ticket-fix-backend`.
+
+#### `/frontend-workflow-knowledge-base`
+
+Builds or corrects the funcionario task notes for one procedure. It reads the Angular code under `Project/frontend`. It does not edit TypeScript, HTML, SCSS, or Java. It does not document the registro wizard (Capturar solicitud, Anexar requisitos, Firmar solicitud).
+
+It reads `.cursor/knowledge/frontend-base/workflow.md` first. If the process number is not in that file’s procedure list, it stops and does not write a page for that number. The procedures in that list are 40101, 40102, 40103, 570101, 570102, 420102, 6001, 303 (aga); 32514, 32515, 32516, 31803, 317 (agace); 220102, 220103, 221601, 221602, 221603, 220701, 220702, 220703, 220404 (agricultura); 290101, 290201 (amecafe).
+
+A process file `.cursor/knowledge/procesos/<process number>/frontend-workflow.md` records only where that procedure’s page body differs. It does not rebuild the inbox. The full shared page body in `workflow.md` is 220102. The same task names apply to every procedure in the list.
+
+#### Shared-component permission
+
+A file inside `tramites/<procedure>/` may be edited directly when a later fix runs. These six folders may also be edited directly. The parent evaluar page around them is not one of them and still needs **Allow**:
+
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_220102`
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_220103`
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_221601`
+- `Project/frontend/apps/agace/src/app/application/evaluar/dictamen317`
+- `Project/frontend/apps/agace/src/app/application/evaluar/dictamen-31803`
+- `Project/frontend/apps/aga/src/app/application/evaluar/dictamen-303`
+
+`Project/frontend/libs/shared` (the inbox, ConsultaioStore, app-reviewers-tabs, solicitante, app-generar-dictamen, firma-electronica, and the wizard buttons) and a department task shell (evaluar, verificar-dictamen, autorizar-dictamen, autorizar-requerimiento, confirmar-notificacion, proceso-requerimiento, atender-requerimiento, and `tramiteConfig.service.ts`) stay unchanged until you choose **Allow**.
 
 ### Backend
 
@@ -88,15 +109,24 @@ In the report, the first column of **Incorrect**, **Missing**, **Incomplete**, a
 
 In the editor, put `x` inside the brackets and save the file. These all count: `- [x]`, `- [X]`, `- [ x]`, `- [ x ]`, `[x]`, `[ x]`. An `x` written outside the brackets does not count. A click in the preview does not write the mark into a table cell.
 
-Then run `/proceso-field-fix` and give the process number.
+Then run `/proceso-field-fix` and give the process number and the same surface, registration or workflow.
 
 ## What a fix is allowed to change
 
-A fix is written only inside that process’s form folder. `Project/frontend/apps/agace/src/app/application/tramites/32515/` is one example. The same limit applies to every process in every department, wherever that folder sits.
+A fix is written only inside that process’s form folder. `Project/frontend/apps/agace/src/app/application/tramites/32515/` is one example. The same limit applies to every process in every department, wherever that folder sits. A file inside `tramites/<procedure>/` may be edited directly.
 
-The command does not edit shared pieces such as `formas-dinamicas`, `input-fecha`, catalog selects, or `libs/shared`. It does not edit the old Java, JSP, or JS, and it does not edit another process.
+These six folders may also be edited directly. The parent evaluar page around them is not one of them and still needs **Allow**:
 
-Before it edits a file outside the process folder, it asks **Allow** or **Do not allow** and waits. Before it removes an existing validation, show/hide behavior, component, heading, label, or message, it asks the same way and waits. Adding or tightening a rule so it matches the old page does not need that extra permission.
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_220102`
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_220103`
+- `Project/frontend/apps/agricultura/src/app/application/evaluar/components_221601`
+- `Project/frontend/apps/agace/src/app/application/evaluar/dictamen317`
+- `Project/frontend/apps/agace/src/app/application/evaluar/dictamen-31803`
+- `Project/frontend/apps/aga/src/app/application/evaluar/dictamen-303`
+
+The command does not edit shared pieces such as `formas-dinamicas`, `input-fecha`, catalog selects, or `libs/shared` (the inbox, ConsultaioStore, app-reviewers-tabs, solicitante, app-generar-dictamen, firma-electronica, and the wizard buttons) until you choose **Allow**. The same **Allow** applies to a department task shell outside `tramites/<procedure>/`: evaluar, verificar-dictamen, autorizar-dictamen, autorizar-requerimiento, confirmar-notificacion, proceso-requerimiento, atender-requerimiento, and `tramiteConfig.service.ts`. It does not edit the old Java, JSP, or JS, and it does not edit another process. The registro wizard is a different flow from the funcionario tasks in `.cursor/knowledge/frontend-base/workflow.md`.
+
+Before it edits a file outside the process folder and outside those six folders, it asks **Allow** or **Do not allow** and waits. Before it removes an existing validation, show/hide behavior, component, heading, label, or message, it asks the same way and waits. Adding or tightening a rule so it matches the old page does not need that extra permission.
 
 The report is not rewritten during the fix. The next `/proceso-field-validation` pass records what now matches.
 

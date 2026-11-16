@@ -1,7 +1,9 @@
 # Field validation — process <number>
 
+Surface: `<registration or workflow>`
 Migrated tree: `<path>`
-Legacy baseline: `.cursor/knowledge/procesos/<number>/legacy.md`
+Legacy baseline: `.cursor/knowledge/procesos/<number>/legacy.md` for registration, or `.cursor/knowledge/procesos/<number>/legacy-workflow.md` for workflow
+New-form map: `.cursor/knowledge/frontend-base/workflow.md` on a workflow pass. Leave blank on a registration pass.
 Platform contract: `.cursor/knowledge/legacy-base/architecture.md`
 Pass: `<1 on the first run, then previous pass + 1>`
 Run date: `<date>`
@@ -9,6 +11,8 @@ Run date: `<date>`
 Two or three sentences at the top: what a person can still do on the new page, and what already matches. No file paths in this opening.
 
 To choose a fix, put `x` inside that row’s brackets (`- [x]` or `- [ x]`), save, and run `/proceso-field-fix`. An `x` outside the brackets does not count. The mark is plain Markdown. No HTML and no plugin.
+
+**JS rule** is the regex or validation condition from the old JavaScript (or inline script), quoted as written. **Spanish message** is the exact Spanish text from the old `.properties` file (or hardcoded Spanish in the JSP/JS). Write `Not found` when the code does not define it. Use these columns on registration and on workflow.
 
 ## Counts
 
@@ -26,9 +30,9 @@ What stays on screen, what is hidden, what can be typed, and which headings chan
 
 Paths under **Where to change** start at the migrated tree. Name the file, the field or method, and the change. Write `No change` on a Match row.
 
-| Fix | Tab | Section | Item | Kind | Behavior | Old page | New page | Verdict | Where to change |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `- [ ]`, or empty when Match | `<tab on the capture screen>` | `<section heading on that tab>` | `<full label on the screen>` | `<Text / Field>` | `<Shown / Hidden / Enabled / Disabled / Readonly / Wording>` | `<when, in plain words>` | `<when, in plain words>` | `<Match / Incorrect>` | `<file, field, and the change, or No change>` |
+| Fix | Tab | Section | Item | Kind | Behavior | Old page | New page | JS rule | Spanish message | Verdict | Where to change |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `- [ ]`, or empty when Match | `<tab on the capture screen>` | `<section heading on that tab>` | `<full label on the screen>` | `<Text / Field>` | `<Shown / Hidden / Enabled / Disabled / Readonly / Wording>` | `<when, in plain words>` | `<when, in plain words>` | `<regex or JS condition, or Not found>` | `<exact Spanish from .properties or JSP/JS, or Not found>` | `<Match / Incorrect>` | `<file, field, and the change, or No change>` |
 
 One sentence on the fields that stay visible and editable, and the headings that keep the same words. If this process has no show, hide, enable, disable, readonly, or wording branch: `None`.
 
@@ -36,9 +40,9 @@ One sentence on the fields that stay visible and editable, and the headings that
 
 Fixed since the previous pass. On the first run write `None`.
 
-| Tab | Section | Item | Was | What was wrong | What it does now | Where to change |
-| --- | --- | --- | --- | --- | --- | --- |
-| `<tab>` | `<section heading>` | `<full label on the screen>` | `<Incorrect / Incomplete / Missing>` | `<previous mismatch, in plain words>` | `<the rule the code now enforces>` | `<file and field that now hold the fix>` |
+| Tab | Section | Item | Was | What was wrong | What it does now | JS rule | Spanish message | Where to change |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `<tab>` | `<section heading>` | `<full label on the screen>` | `<Incorrect / Incomplete / Missing>` | `<previous mismatch, in plain words>` | `<the rule the code now enforces>` | `<regex or JS condition now matched, or Not found>` | `<exact Spanish now matched, or Not found>` | `<file and field that now hold the fix>` |
 
 ## Incorrect
 
@@ -46,9 +50,9 @@ The new page still disagrees with the old page. Check **Fix** on a row to includ
 
 ### <short group name>
 
-| Fix | Tab | Section | Item | Old page | New page | Example | Where to change |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| - [ ] | `<tab>` | `<section heading>` | `<full label on the screen>` | `<what the old page does>` | `<what the new page does>` | `<one value>` | `<file inside this process, the field or method, and the change>` |
+| Fix | Tab | Section | Item | Old page | New page | JS rule | Spanish message | Example | Where to change |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| - [ ] | `<tab>` | `<section heading>` | `<full label on the screen>` | `<what the old page does>` | `<what the new page does>` | `<regex or JS condition from old JS, or Not found>` | `<exact Spanish from .properties, or Not found>` | `<one value>` | `<file inside this process, the field or method, and the change>` |
 
 If none: `None`.
 
@@ -56,9 +60,9 @@ If none: `None`.
 
 The old page checks this and the new page has no equivalent.
 
-| Fix | Tab | Section | Item | Old page | Where to change |
-| --- | --- | --- | --- | --- | --- |
-| - [ ] | `<tab>` | `<section heading>` | `<full label on the screen>` | `<rule, in plain words>` | `<file inside this process, the field or method, and the change. Name a shared file only when this form cannot do it alone>` |
+| Fix | Tab | Section | Item | Old page | JS rule | Spanish message | Where to change |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| - [ ] | `<tab>` | `<section heading>` | `<full label on the screen>` | `<rule, in plain words>` | `<regex or JS condition from old JS, or Not found>` | `<exact Spanish from .properties, or Not found>` | `<file inside this process, the field or method, and the change. Name a shared file only when this form cannot do it alone>` |
 
 If none: `None`.
 
@@ -66,17 +70,17 @@ If none: `None`.
 
 Part of the rule is present. The same values still pass and fail.
 
-| Fix | Tab | Section | Item | Already there | Still absent | Where to change |
-| --- | --- | --- | --- | --- | --- | --- |
-| - [ ] | `<tab>` | `<section heading>` | `<full label on the screen>` | `<what matches>` | `<what is absent>` | `<file inside this process, the field or method, and the change>` |
+| Fix | Tab | Section | Item | Already there | Still absent | JS rule | Spanish message | Where to change |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| - [ ] | `<tab>` | `<section heading>` | `<full label on the screen>` | `<what matches>` | `<what is absent>` | `<regex or JS condition from old JS, or Not found>` | `<exact Spanish from .properties, or Not found>` | `<file inside this process, the field or method, and the change>` |
 
 If none: `None`.
 
 ## Match
 
-| Tab | Section | Item | What matches |
-| --- | --- | --- | --- |
-| `<tab>` | `<section heading>` | `<full label on the screen>` | `<required, max, pattern, or behavior, in plain words>` |
+| Tab | Section | Item | What matches | JS rule | Spanish message |
+| --- | --- | --- | --- | --- | --- |
+| `<tab>` | `<section heading>` | `<full label on the screen>` | `<required, max, pattern, or behavior, in plain words>` | `<regex or JS condition from old JS, or Not found>` | `<exact Spanish from .properties, or Not found>` |
 
 ## Behavior
 
@@ -89,7 +93,7 @@ A short map of the tables above. One line each. Do not repeat the file and the c
 Controls on the new page that the old page does not have. Not a gap.
 
 | Tab | Section | Control | Checks found | Where it lives |
-| --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | `<tab>` | `<section heading>` | `<name>` | `<required, pattern, max>` | `<file>. No change.` |
 
 If none: `None`.

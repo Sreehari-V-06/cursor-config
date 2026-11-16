@@ -3,20 +3,23 @@ name: legacy-proceso-knowledge-base
 description: >
   Builds or corrects the process knowledge base so a later agent can open the
   correct old file without searching the whole old tree. Use when anyone who
-  has the old code gives a process number (such as 32515) and a controller
-  class or path and asks for a knowledge base, process map, or legacy field
-  and validation inventory. The old code is under old/, legacy/, or old code/.
-  Open every dialog the capture page opens and write one field row per input
-  inside it, from that dialog’s JSP and validate(). Read-only on Java, JSP, JS,
-  and Spring XML. Do not use this skill to validate the form or to fix a
-  backend GitHub issue. Form validation is /proceso-field-validation. The
-  backend fix is /github-ticket-fix-backend.
+  has the old code gives a process number (such as 32515), says whether the
+  pass is registration or workflow, and gives a controller class or path, and
+  asks for a knowledge base, process map, or legacy field and validation
+  inventory. If that surface’s knowledge base already exists, ask whether to
+  create it again; do not rebuild until the user says yes. The old code is
+  under old/, legacy/, or old code/. Open every dialog the capture page opens
+  and write one field row per input inside it, from that dialog’s JSP and
+  validate(). Read-only on Java, JSP, JS, and Spring XML. Do not use this
+  skill to validate the form or to fix a backend GitHub issue. Form
+  validation is /proceso-field-validation. The backend fix is
+  /github-ticket-fix-backend.
 disable-model-invocation: true
 ---
 
 # Legacy process knowledge base
 
-This skill writes `.cursor/knowledge/procesos/<processNumber>/legacy.md` for one process. The old tree is large, and a similar class in a sibling trámite is the wrong implementation. The knowledge base exists so a later agent opens the file and method this process actually runs, and does not search `old/`, `legacy/`, or `old code/` for another match.
+This skill writes one knowledge base for one process and one surface. Registration and workflow each need their own file. Registration writes `.cursor/knowledge/procesos/<processNumber>/legacy.md`. Workflow writes `.cursor/knowledge/procesos/<processNumber>/legacy-workflow.md`. `/proceso-field-validation` asks which surface to score and reads only that file. The old tree is large, and a similar class in a sibling trámite is the wrong implementation. The knowledge base exists so a later agent opens the file and method this process actually runs, and does not search `old/`, `legacy/`, or `old code/` for another match.
 
 A backend developer and a frontend developer both use it. It does not validate the form. It does not fix a backend GitHub issue. Those commands are `/proceso-field-validation` and `/github-ticket-fix-backend`. They read this file first.
 
@@ -26,21 +29,29 @@ The new form and the new backend may be absent. When they are present, they may 
 
 Build one knowledge base for the legacy trámite the user names. Read code. Do not edit Java, JSP, JS, or Spring XML.
 
-The user must supply both. Ask one question at a time. Do not read code until both answers are in the conversation.
+The user must supply the process number, the surface, and the controller. Ask one question at a time. Do not read process code until the knowledge-base overwrite is allowed (or the file is missing) and the controller is known.
 
-1. If the user has not given a **process number**, ask for it and stop. Do not ask for the controller in that same turn.
-2. After the process number is known, if the user has not given the **controller** (class name or path), ask for it and stop.
+1. If the user has not given a **process number**, ask for it and stop. Do not ask the next question in that same turn.
+2. If the user has not said **registration** or **workflow**, ask which this pass is and stop. Registration is the registro wizard (Capturar solicitud, Anexar requisitos, Firmar solicitud). Workflow is the funcionario task flow (evaluar, verificar dictamen, autorizar dictamen, confirmar notificación, autorizar requerimiento, atender requerimiento).
+3. As soon as the process number and the surface are known, check whether that surface’s knowledge base already exists. Registration checks `.cursor/knowledge/procesos/<processNumber>/legacy.md`. Workflow checks `.cursor/knowledge/procesos/<processNumber>/legacy-workflow.md`. Check only the file for the surface chosen. The other surface’s file does not count.
+   - If that file **exists**, do not rebuild it yet. Tell the user the path. Ask whether they want to **create it again** and stop. Do not ask for the controller in that same turn.
+   - If the user says **no** (or keep / leave / skip), stop. Leave the existing file and the index rule unchanged. Do not read process code.
+   - If the user says **yes** (or rebuild / recreate / overwrite), continue.
+   - If that file is **missing**, continue. Do not ask about creating again.
+4. After the file is missing or the user said yes to create again, if the user has not given the **controller** (class name or path), ask for it and stop. For registration, that controller is the registro controller. For workflow, that controller is the task controller this pass documents.
 
-If the invoking message already contains both, do not ask again. Use those values. Do not scan every trámite to guess.
+If the invoking message already contains the process number, the surface, and the controller, still run step 3 before reading code. If the knowledge base exists and the user has not answered create-again, ask that and stop even when the controller was given. Do not scan every trámite to guess.
+
+A registration pass writes `legacy.md` and leaves `legacy-workflow.md` unchanged. A workflow pass writes `legacy-workflow.md` and leaves `legacy.md` unchanged. To validate both surfaces later, run this command twice: once for registration, once for workflow.
 
 ## Write these two files
 
-1. Knowledge base: `.cursor/knowledge/procesos/<processNumber>/legacy.md`
-   Fill [template.md](template.md). Replace every placeholder. Delete none of its sections.
+1. Knowledge base: `.cursor/knowledge/procesos/<processNumber>/legacy.md` for registration, or `.cursor/knowledge/procesos/<processNumber>/legacy-workflow.md` for workflow.
+   Fill [template.md](template.md). Replace every placeholder. Delete none of its sections. Set **Surface** to `registration` or `workflow`. On a workflow pass, the registro URL, the registro controller, and the registro wizard are `Not found` unless this task controller is that wizard.
 2. Index rule: the existing `.cursor/rules/proceso-<processNumber>*.mdc`, or `.cursor/rules/proceso-<processNumber>.mdc` when none exists.
    `alwaysApply: false`. Globs cover the process package, its JSP and JS trees, and the knowledge base path. The rule body is only the identity block from the template plus two instructions: read the knowledge base before changing the trámite, and open only the files named in its code map. One rule per process number. Do not add a second file beside an existing `proceso-<processNumber>*.mdc`.
 
-If either file already exists, refresh it from the code. Outside the code map, keep a sentence only when this pass still finds the evidence. Do not leave a claim from an older pass that this pass did not confirm. Inside the code map, a **File** cell that points at a sibling or at a parent this process does not run is wrong: replace it with the implementation this pass proved, and put the rejected path in **Do not open**. Add a row for a behavior this pass confirmed and the map did not list. Keep a code-map row this pass did not re-check. Do not drop a confirmed path because a wider search found a similar class.
+Only rewrite the knowledge base when it was missing or the user said yes to create it again. Do not refresh an existing file on your own. When rewriting, fill from the code. Outside the code map, keep a sentence only when this pass still finds the evidence. Do not leave a claim from an older pass that this pass did not confirm. Inside the code map, a **File** cell that points at a sibling or at a parent this process does not run is wrong: replace it with the implementation this pass proved, and put the rejected path in **Do not open**. Add a row for a behavior this pass confirmed and the map did not list. Keep a code-map row this pass did not re-check. Do not drop a confirmed path because a wider search found a similar class.
 
 ## Steps
 
@@ -50,7 +61,9 @@ Copy this checklist and mark each item as you finish it:
 - [ ] Before asking, stop and name the missing path unless the parent contains .cursor and the old code in old/, legacy/, or old code/
 - [ ] Do not stop because the new form or the new backend is missing
 - [ ] Ask for the process number when the message does not include one
-- [ ] Ask for the controller when the message does not include one
+- [ ] Ask whether this pass is registration or workflow when the message does not say
+- [ ] When that surface’s knowledge base exists, ask whether to create it again and stop; if the user says no, leave the file and stop
+- [ ] Ask for the controller when the message does not include one (only after the file is missing or the user said yes)
 - [ ] Read .cursor/knowledge/legacy-base/architecture.md
 - [ ] Resolve the controller file
 - [ ] Prove the process number
@@ -61,8 +74,8 @@ Copy this checklist and mark each item as you finish it:
 - [ ] Extract every live field and every dead selector, including every field inside each dialog
 - [ ] Extract role branches, submit scope, documents, persistence, reports
 - [ ] Write the code map: one correct file and method per behavior, siblings under Do not open
-- [ ] Refresh an existing file from the code: drop a non-map claim this pass did not confirm, correct a wrong File cell, add confirmed rows it lacks, and keep a code-map row this pass did not re-check
-- [ ] Write legacy.md from the template
+- [ ] When rewriting an existing file the user approved, drop a non-map claim this pass did not confirm, correct a wrong File cell, add confirmed rows it lacks, and keep a code-map row this pass did not re-check
+- [ ] Write legacy.md for registration, or legacy-workflow.md for workflow, from the template
 - [ ] Write the index rule
 ```
 
@@ -72,7 +85,7 @@ Read `.cursor/knowledge/legacy-base/architecture.md` before opening process code
 
 If that file is missing, stop and say so. Do not rebuild the platform chapter inside the process file.
 
-Use the registro parent chain in that file only when the named controller extends `RegistroSolicitudController`. If it extends a different class, record that parent and do not force the registro chain.
+On a registration pass, use the registro parent chain in that file only when the named controller extends `RegistroSolicitudController`. If it extends a different class, record that parent and do not force the registro chain. On a workflow pass, the named controller is a task controller. Record the parent it extends. Do not force the registro chain. Do not open the registro wizard to fill this file.
 
 ### 1. Resolve the controller
 
@@ -102,7 +115,9 @@ For each method the architecture file lists on the controller, service, and rule
 
 ### 5. Capture surface
 
-From the controller and its JSP constants, open the capture JSP and every JSP it includes for this process. Open each script tag under this process’s JS folder. Ignore a script that no JSP for this process includes.
+On a registration pass, this is the registro capture page. On a workflow pass, this is the page the named task controller returns. Do not open the registro wizard on a workflow pass.
+
+From the controller and its JSP constants, open that page and every JSP it includes for this process. Open each script tag under this process’s JS folder. Ignore a script that no JSP for this process includes.
 
 Open every dialog the capture page or those scripts open. That includes a JSP a script loads into a dialog, a hidden dialog div, and the `validate()` function that dialog calls. Read each of those files to the last line. A dialog is part of this process. Do not stop at the main wizard. Related dialogs stay separate: an agent dialog, an apoderado dialog, and an agency dialog are three forms.
 
@@ -142,7 +157,7 @@ Every filled cell cites a path. Use `Not found` when the code does not say. Do n
 
 Input: process `32515`, controller `RegistroSolicitudAvisoValorProvisionalController`.
 
-Writes `.cursor/knowledge/procesos/32515/legacy.md` and refreshes the existing `.cursor/rules/proceso-32515-aviso-valor-provisional.mdc` instead of adding a second rule.
+Writes `.cursor/knowledge/procesos/32515/legacy.md` when that file is missing, or when it exists and the user said yes to create it again. Refreshes the existing `.cursor/rules/proceso-32515-aviso-valor-provisional.mdc` instead of adding a second rule. A workflow pass for the same number writes `legacy-workflow.md` and leaves `legacy.md` unchanged. If `legacy.md` already exists and the user says no, the pass stops and does not rewrite.
 
 A field row that meets the bar:
 
@@ -152,4 +167,4 @@ A field row that meets the bar:
 
 ## After writing
 
-Tell the user the two paths, the code-map rows, and every section whose cells are `Not found`. Name every dialog that was opened. If the capture page has no dialog, say so. Do not start a form comparison, a frontend comparison, or a backend fix in this skill. Later commands open the code-map files. They add one row when they confirm a file the map does not list. They do not search the whole old tree. Field validation against the migrated tree is the `proceso-field-validation` skill, and it requires this `legacy.md`.
+Tell the user the two paths, the surface, the code-map rows, and every section whose cells are `Not found`. Name every dialog that was opened. If the page has no dialog, say so. Do not start a form comparison, a frontend comparison, or a backend fix in this skill. Later commands open the code-map files. They add one row when they confirm a file the map does not list. They do not search the whole old tree. Field validation against the migrated tree is the `proceso-field-validation` skill. A registration pass requires this `legacy.md`. A workflow pass requires this `legacy-workflow.md`.
