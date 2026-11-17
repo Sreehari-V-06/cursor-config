@@ -60,6 +60,7 @@ Copy this checklist and mark each item as you finish it:
 ```
 - [ ] Before asking, stop and name the missing path unless the parent contains .cursor and the old code in old/, legacy/, or old code/
 - [ ] Do not stop because the new form or the new backend is missing
+- [ ] Stop unless the open folder contains .cursor, legacy/vuc_mtto_commons, and Project/frontend
 - [ ] Ask for the process number when the message does not include one
 - [ ] Ask whether this pass is registration or workflow when the message does not say
 - [ ] When that surface’s knowledge base exists, ask whether to create it again and stop; if the user says no, leave the file and stop

@@ -1,6 +1,7 @@
 # Field validation — process <number>
 
 Surface: `<registration or workflow>`
+Flow: `<workflow task option label, e.g. Generar dictamen; blank on registration>`
 Migrated tree: `<path>`
 Legacy baseline: `.cursor/knowledge/procesos/<number>/legacy.md` for registration, or `.cursor/knowledge/procesos/<number>/legacy-workflow.md` for workflow
 New-form map: `.cursor/knowledge/frontend-base/workflow.md` on a workflow pass. Leave blank on a registration pass.
@@ -8,7 +9,7 @@ Platform contract: `.cursor/knowledge/legacy-base/architecture.md`
 Pass: `<1 on the first run, then previous pass + 1>`
 Run date: `<date>`
 
-Two or three sentences at the top: what a person can still do on the new page, and what already matches. No file paths in this opening.
+Two or three sentences at the top: what a person can still do on the new page, and what already matches. No file paths in this opening. On a workflow report, the opening also covers reviewers tabs when that page mounts them (what stays readable, what locks, what hides).
 
 To choose a fix, put `x` inside that row’s brackets (`- [x]` or `- [ x]`), save, and run `/proceso-field-fix`. An `x` outside the brackets does not count. The mark is plain Markdown. No HTML and no plugin.
 

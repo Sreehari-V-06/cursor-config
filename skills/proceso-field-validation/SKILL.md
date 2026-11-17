@@ -2,22 +2,31 @@
 name: proceso-field-validation
 description: >
   Frontend command. Ask process number, then registration or workflow.
-  Each surface needs its own knowledge base: legacy.md for registration,
-  legacy-workflow.md for workflow. One file does not cover the other.
-  Order: common legacy architecture, then that process file, then a
-  cross-check against the migrated frontend, then a report. A workflow
-  pass also reads .cursor/knowledge/frontend-base before the cross-check.
-  A registration pass does not.   The cross-check starts at the route and opens every component and every
-  modal before the report is written. On both registration and workflow,
-  score validation, logic, and UI behavior from the old JSP, the old
-  JavaScript (including validate() and regex), and the old .properties
-  files (exact Spanish messages). The report records the JS rule and the
-  Spanish message when they exist. After the report, the user marks Fix on
-  the rows to change. Use when the user invokes /proceso-field-validation
-  or asks to validate the form again after fixes. Do not use this skill to
-  build the process knowledge base, to edit the form, or to fix a backend
-  GitHub issue. The form fix is /proceso-field-fix. The backend fix is
-  /github-ticket-fix-backend.
+  On workflow, also ask which task flow (Generar dictamen, Autorizar
+  dictamen, Generar requerimiento, Atender requerimiento, etc.) and
+  score only that flow in detail. Every workflow flow also scores the
+  reviewers tabs on that page (app-reviewers-tabs): which tabs show or
+  hide, Solicitud and other tab sections, readonly display accuracy,
+  and conditional rendering. Each surface needs its own knowledge
+  base: legacy.md for registration, legacy-workflow.md for workflow.
+  One file does not cover the other. Order: common legacy architecture,
+  then that process file, then a cross-check against the migrated
+  frontend, then a report. A workflow pass also reads
+  .cursor/knowledge/frontend-base before the cross-check. A registration
+  pass does not. The cross-check starts at the chosen route and opens
+  every component and every modal before the report is written. On both
+  registration and workflow, score validation, logic, and UI behavior
+  from the old JSP, the old JavaScript (including validate() and regex),
+  and the old .properties files (exact Spanish messages). Analyse in
+  detail: required, maxlength, filters, paste, validators, messages,
+  show/hide, enable/disable, readonly, section headings, submit guards,
+  and modal fields. The report records the JS rule and the Spanish
+  message when they exist. After the report, the user marks Fix on the
+  rows to change. Use when the user invokes /proceso-field-validation
+  or asks to validate the form again after fixes. Do not use this skill
+  to build the process knowledge base, to edit the form, or to fix a
+  backend GitHub issue. The form fix is /proceso-field-fix. The
+  backend fix is /github-ticket-fix-backend.
 disable-model-invocation: true
 ---
 
@@ -38,18 +47,38 @@ Run these steps in order. Do not cross-check until the knowledge steps for this 
 1. **Common knowledge.** Read `.cursor/knowledge/legacy-base/architecture.md`. If that file is missing, stop and say so. Use it for the platform contract (`class="required"` versus a label asterisk, stripes, `parentSelectName`, jquery `ignore: []`). Do not treat a process-script comment as that contract.
 2. **Process knowledge.** Read the inventory for the surface the user chose. Registration uses `.cursor/knowledge/procesos/<processNumber>/legacy.md`. Workflow uses `.cursor/knowledge/procesos/<processNumber>/legacy-workflow.md`. This skill runs only when that file is already present. If it is missing, stop even when the other surface’s file exists. Tell the user this skill is not allowed for that surface until its own knowledge base exists, and to build it with `/legacy-proceso-knowledge-base` (process number, that surface, and the old-code controller). Do not build the knowledge base in this skill. Do not invent the legacy inventory. Do not score workflow from `legacy.md`. Do not score registration from `legacy-workflow.md`.
 3. **Frontend knowledge (workflow only).** On a workflow pass, read `.cursor/knowledge/frontend-base` before scoring a field. Open `.cursor/knowledge/frontend-base/workflow.md`. If that file is missing, stop. If the process number is not in **Procedures in scope**, stop. Use it for the new-page contract: department, task URL, shared shell versus procedure body, and **Department:** versus **Procedure:** lines. Do not copy a numbered sentence onto another procedure. Then open the Angular files that file names. Do not guess a new-form path that `workflow.md` does not name. On a registration pass, skip this step. Do not open `.cursor/knowledge/frontend-base`.
-4. **Cross-check.** Start from the route for that surface. Open every component the screens declare and every modal those components open. Read each of those files to the last line. On the old side, for every page and every modal, open the **JSP**, the **JavaScript** it includes (`validate()`, regex, show/hide, enable/disable, readonly, submit guards), and the **`.properties`** files that hold the Spanish messages those pages use. Same sources for registration and for workflow. Compare field by field and behavior by behavior. A match on the parent screen does not end the check. A one-line summary in the inventory is not the rule for a modal.
-5. **Report.** Write the report for that surface only after that list is finished. Registration writes `model-result/<processNumber>/filed-validation/report.md`. Workflow writes `model-result/<processNumber>/workflow-validation/report.md`. Fill **JS rule** and **Spanish message** on every scored validation row when the evidence exists. If one modal was not opened, do not write the report.
+4. **Cross-check.** Start from the route for that surface. Open every component the screens declare and every modal those components open. On a **workflow** pass, also open `app-reviewers-tabs` (when mounted), every reviewer tab the bar can show for this procedure/flow, and the Solicitud capture child in readonly/consulta mode: sections, fields, labels, show/hide, enable/disable, and value display. Read each of those files to the last line. On the old side, for every page and every modal, open the **JSP**, the **JavaScript** it includes (`validate()`, regex, show/hide, enable/disable, readonly, submit guards), and the **`.properties`** files that hold the Spanish messages those pages use. For reviewers, also open the old **consulta** JSPs named in the inventory / Code map. Same sources for registration and for workflow. Compare field by field and behavior by behavior. A match on the parent screen does not end the check. A one-line summary in the inventory is not the rule for a modal. Skipping reviewers on a flow that mounts them is not allowed.
+5. **Report.** Write the report for that surface (and workflow flow) only after that list is finished. Registration writes `model-result/<processNumber>/filed-validation/report.md`. Workflow writes `model-result/<processNumber>/workflow-validation/<flow-slug>/report.md`. Fill **JS rule** and **Spanish message** on every scored validation row when the evidence exists. If one modal was not opened, do not write the report. On a workflow report, include reviewers findings in **UI behavior**, **Match**, and the open tables (not a separate file).
 
 ## Ask first
 
-Ask for the process number, then whether this pass is **registration** or **workflow**. Ask one question at a time. Do not skip the surface question. Do not ask for the old-code controller.
+Ask for the process number, then whether this pass is **registration** or **workflow**. On a **workflow** pass, also ask which **task flow** to score. Ask one question at a time. Do not skip the surface question. Do not skip the workflow-flow question. Do not ask for the old-code controller.
 
 1. If the user has not given a **process number**, ask for it and stop. Do not ask the next question in that same turn.
-2. If the user has not said **registration** or **workflow**, ask which this pass is and stop. Registration is the registro wizard (Capturar solicitud, Anexar requisitos, Firmar solicitud). Workflow is the funcionario task flow (evaluar, verificar dictamen, autorizar dictamen, confirmar notificación, autorizar requerimiento, atender requerimiento). To validate both, run this command twice, once per surface, each with its own knowledge base.
-3. As soon as both are known, check the inventory for that surface only. Registration requires `.cursor/knowledge/procesos/<processNumber>/legacy.md`. Workflow requires `.cursor/knowledge/procesos/<processNumber>/legacy-workflow.md`. If that file is missing, stop. This skill is not allowed for that surface until its own knowledge base exists. Tell the user to build it with `/legacy-proceso-knowledge-base` for that same surface. Do not offer to build it here. Do not open the other surface’s file.
+2. If the user has not said **registration** or **workflow**, ask which this pass is and stop. Registration is the registro wizard (Capturar solicitud, Anexar requisitos, Firmar solicitud). Workflow is the funcionario task flow. To validate both surfaces, run this command twice, once per surface, each with its own knowledge base.
+3. If this pass is **workflow** and the user has not named a **task flow**, list the options below and ask which one to score. Stop. Do not ask for anything else in that same turn. Do not start the cross-check until the flow is chosen.
+4. As soon as the surface is known (and, for workflow, the task flow is known), check the inventory for that surface only. Registration requires `.cursor/knowledge/procesos/<processNumber>/legacy.md`. Workflow requires `.cursor/knowledge/procesos/<processNumber>/legacy-workflow.md`. If that file is missing, stop. This skill is not allowed for that surface until its own knowledge base exists. Tell the user to build it with `/legacy-proceso-knowledge-base` for that same surface. Do not offer to build it here. Do not open the other surface’s file.
 
-If the invoking message already contains the process number and the surface, do not ask again.
+### Workflow task-flow options
+
+When asking for the workflow flow, present these options (use the labels the user can pick). Map each choice to the route in `.cursor/knowledge/frontend-base/workflow.md` for this procedure’s department:
+
+| Option the user can pick | What to score |
+| --- | --- |
+| `Generar dictamen` | Evaluar → Generar dictamen choice body (shell + procedure dictamen body + modals) **and** `app-reviewers-tabs` on that page |
+| `Generar requerimiento` | Evaluar → Generar requerimiento (capturar requerimiento + seleccionar documentos + modals) **and** `app-reviewers-tabs` on that page |
+| `Verificar dictamen` | `/${department}/verificar-dictamen` **and** reviewers tabs when mounted |
+| `Autorizar dictamen` | `/${department}/autorizar-dictamen` **and** reviewers tabs when mounted |
+| `Confirmar notificación` | `/${department}/confirmar-notificacion` (score reviewers only if that page mounts them; many departments do not) |
+| `Autorizar requerimiento` | `/${department}/autorizar-requerimiento` **and** reviewers tabs when mounted |
+| `Atender requerimiento` | `/${department}/proceso-requerimiento` (datos / anexar / firmar as that page mounts) **and** reviewers tabs / hide rules on that page |
+| `Solicitud tab (readonly on Evaluar)` | Deep-dive option: reviewer Solicitud tab only. Prefer scoring Solicitud inside the task flow above; use this only when the user wants Solicitud alone |
+
+**Reviewers tabs (required on every workflow flow that mounts them).** Do not treat reviewers as a separate optional pass. For the chosen flow, open `app-reviewers-tabs` (or the page’s equivalent) and score: bar show/hide/disable rules; each visible tab (Solicitud, Documentos, Dictamen, Requerimientos, Opiniones, Acuses, Tareas, etc.); inside Solicitud, every section/tab of the procedure capture child; readonly vs editable accuracy (`ConsultaioStore.readonly`, disabled controls, hidden Agregar/Modificar/Eliminar); conditional rendering (justificación, exento, mercancía actions, merged “Datos generales”, label asterisks); and display of loaded values. Compare to the old consulta / evaluador consulta JSP for that procedure (`consulta/`, `consultarSolicitud`, tabs in `legacy-workflow.md` / `workflow.md` Reviewer tabs). If the page correctly has no reviewers bar, say so under Correctly absent and do not invent tabs.
+
+If the user names more than one flow, ask them to pick **one** and stop. Score only the chosen flow in this pass. To validate another flow, run the command again.
+
+If the invoking message already contains the process number, the surface, and (for workflow) the task flow, do not ask again for those answered items.
 
 The user does not have to give the form path. When they do not, use the folder the search found. When they do, use that path after confirming it is this process.
 
@@ -57,39 +86,44 @@ Confirm the migrated tree is this process: the folder name, a route, or a proced
 
 ## Write
 
-Registration writes `model-result/<processNumber>/filed-validation/report.md`. Workflow writes `model-result/<processNumber>/workflow-validation/report.md`. Both sit at the repository root. A pass updates only the report for the surface it was given.
+Registration writes `model-result/<processNumber>/filed-validation/report.md`. Workflow writes `model-result/<processNumber>/workflow-validation/<flow-slug>/report.md`, where `<flow-slug>` is one of: `generar-dictamen`, `generar-requerimiento`, `verificar-dictamen`, `autorizar-dictamen`, `confirmar-notificacion`, `autorizar-requerimiento`, `atender-requerimiento`, `solicitud-tab-evaluar`. Both sit at the repository root. A pass updates only the report for the surface and (on workflow) the task flow it was given. Do not overwrite a different flow’s report.
 
-Fill [report-template.md](report-template.md). Delete none of its sections. Do not write this report under `.cursor/knowledge`.
+Fill [report-template.md](report-template.md). Delete none of its sections. Set **Flow** on a workflow report to the chosen option label. Leave **Flow** blank on a registration report. Do not write this report under `.cursor/knowledge`.
 
 Write for a person who will choose rows to fix, and for the frontend developer who will make the change. Open with what they can still do on the screen. Under each section heading, one short sentence in everyday language. In the reading columns, say **Old page** and **New page**. The **Item** cell is the full label shown on the screen. Do not shorten it. On **Incorrect**, **Incomplete**, **Missing**, and **Match** rows, fill **JS rule** and **Spanish message** when the old side has them (same columns for registration and workflow). **JS rule** is the regex, jquery rule, or validation condition from the JS (or inline script), quoted as written. **Spanish message** is the exact Spanish text from the `.properties` file (or from a hardcoded Spanish string in the JSP/JS when no properties key exists). Write `Not found` in that cell when the code does not define it. Do not invent a message. The last column is **Where to change**: the file inside this process folder, the field or method, and the change in plain words. Name a shared file only when this form cannot do the change alone. Do not fill that column with a `legacy.md` citation. Group **Incorrect** rows under a short heading when several rows are the same kind of problem. Keep every row.
 
 The first column of **Incorrect**, **Missing**, **Incomplete**, and **UI behavior** is **Fix**. An open row uses `- [ ]`. A chosen row has `x` inside the brackets: `- [x]`, `- [X]`, `- [ x]`, or `[x]`. A Match row leaves that cell empty. An `x` written outside the brackets is not a choice. This mark is plain Markdown so the same file works on any system. Do not use an HTML checkbox, a preview widget, or a plugin. Do not add a second list above the table. When this pass rewrites the report, keep a chosen mark on a row that is still open. Do not edit the form in this pass. The user runs `/proceso-field-fix` after saving the marks.
 
-If the report for this surface already exists, this pass updates that file. Do not start a second report for the same surface. Read the previous **Incorrect**, **Missing**, **Incomplete**, and **Corrected** rows first. Re-check every one of those items in the current migrated tree, then rewrite the file with this pass’s results.
+If the report for this surface (and, on workflow, this task flow) already exists, this pass updates that file. Do not start a second report for the same surface/flow. Do not overwrite a different workflow flow’s report. Read the previous **Incorrect**, **Missing**, **Incomplete**, and **Corrected** rows first. Re-check every one of those items in the current migrated tree, then rewrite the file with this pass’s results.
 
 ## Steps
 
 ```
 - [ ] Before asking, stop and name the missing path unless the parent contains .cursor and the old code in old/, legacy/, or old code/
+- [ ] Stop unless the open folder contains .cursor, legacy/vuc_mtto_commons, and Project/frontend
 - [ ] Ask for the process number when the message does not include one
 - [ ] Ask whether this pass is registration or workflow when the message does not say
+- [ ] On a workflow pass, list the task-flow options and ask which flow to score when the message does not name one; stop until chosen
 - [ ] On a registration pass, when no form path was given, search the parent for tramites/<processNumber>, including Project/frontend/**/tramites/<processNumber> and new code/; name what is missing and ask if the match is missing or not unique
 - [ ] Stop if the inventory for that surface is missing: legacy.md for registration, legacy-workflow.md for workflow. Do not use the other surface’s file.
 - [ ] Read .cursor/knowledge/legacy-base/architecture.md
 - [ ] Read the inventory for that surface
 - [ ] On a workflow pass only, read .cursor/knowledge/frontend-base/workflow.md and stop if it is missing or the process number is not in Procedures in scope. Do not open that folder on a registration pass
-- [ ] Read the report for that surface when it exists
+- [ ] Scope the route to the chosen workflow task flow only; do not score other funcionario tasks in the same pass
+- [ ] On a workflow pass, include `app-reviewers-tabs` (when mounted) and every reviewer tab/section for that flow in the open list; do not skip Solicitud readonly
+- [ ] Read the report for that surface (and flow, on workflow) when it exists
 - [ ] Confirm the migrated tree is this process number
-- [ ] List every page on the route, every component those pages declare, and every modal those components open
+- [ ] List every page on the chosen route, every component those pages declare, every section/tab (including reviewers), and every modal those components open
 - [ ] Read each of those files to the last line
-- [ ] Open the old JSP, the old JavaScript (validate(), regex, UI logic), and the related .properties files for each page and each modal, to the last line
-- [ ] Map each field, including every field inside each modal, to a migrated control
-- [ ] Cross-check validation, logic, and UI behavior for each of those fields from JSP + JS + properties
+- [ ] Open the old JSP (including consulta JSPs on workflow), the old JavaScript (validate(), regex, UI logic), and the related .properties files for each page and each modal, to the last line
+- [ ] Map each field, including every field inside each modal and each reviewers Solicitud section, to a migrated control
+- [ ] Cross-check in detail for each field and section: required, maxlength, character filter, paste, validator regex/conditions, Spanish message, on-failure, shown/hidden, enabled/disabled, readonly, headings/wording, catalog parent, submit/Continuar/Guardar/dialog-accept guards, and reviewers conditional rendering / readonly display
 - [ ] Resolve each message key to the exact Spanish text in the .properties file when a key exists
 - [ ] Classify each finding, including previously reported items
-- [ ] Update the report for that surface only after that list is finished: filed-validation/report.md for registration, workflow-validation/report.md for workflow. Fill JS rule and Spanish message columns
-- [ ] Tell the user which modals were opened, then tell them to mark Fix with `- [x]`, save, and run /proceso-field-fix, then stop
+- [ ] Update the report for that surface/flow only after that list is finished: filed-validation/report.md for registration, workflow-validation/<flow-slug>/report.md for workflow. Fill JS rule and Spanish message columns
+- [ ] Tell the user which flow, which reviewers tabs, and which modals were opened, then tell them to mark Fix with `- [x]`, save, and run /proceso-field-fix, then stop
 ```
+
 
 ### Open every screen and every modal
 
@@ -97,22 +131,23 @@ A modal is part of this process. Score every field inside it, and every shown, h
 
 On a registration pass, the route is the registro form under `tramites/<processNumber>`, and the old page is the capture JSP named in `legacy.md`. Do not open `.cursor/knowledge/frontend-base`.
 
-On a workflow pass, read `.cursor/knowledge/frontend-base/workflow.md` first. If the process number is not in **Procedures in scope**, stop. The route is the funcionario task URL that file names for this procedure’s department. The old page is the task JSP named in `legacy-workflow.md`. Score the new page against that file and the Angular it names: shared shell versus procedure body, **Department:** versus **Procedure:**. Do not score the registro wizard on a workflow pass.
+On a workflow pass, read `.cursor/knowledge/frontend-base/workflow.md` first. If the process number is not in **Procedures in scope**, stop. The route is **only** the funcionario task the user chose (see **Workflow task-flow options**). Do not open or score a sibling task in the same pass. The old page is the matching task JSP / capture body named in `legacy-workflow.md` for that flow, plus the **consulta** JSPs for reviewers. Score the new page against that file and the Angular `workflow.md` names for that task: shared shell versus procedure body, **Department:** versus **Procedure:**, and the **Reviewer tabs** section. Analyse every field and every section in detail (validation, messages, show/hide, enable/disable, readonly, headings, submit guards, every modal, and every reviewers tab). Do not score the registro wizard on a workflow pass.
 
 Build the list before scoring any row:
 
 1. Start at the route for this surface. Name every page and wizard step that route mounts.
-2. For each page, open the template and name every component it declares, including each tab.
+2. For each page, open the template and name every component it declares, including each tab and `app-reviewers-tabs` when present.
 3. For each component, open the template and the class. Name every modal, dialog, or panel it opens. That includes Agregar, Modificar, a `MatDialog` open, a dialog service, and a child component that is the dialog. Open that dialog’s template and class.
-4. Repeat when a dialog opens another dialog.
-5. Read each of those files to the last line. If a read stops early, read the rest before any row is scored. A control past the cutoff is not Missing and is not skipped.
-6. On the old side, open the page named in the inventory, every JSP it includes, and every JSP a script loads into a dialog. Open every **JavaScript** file those pages include under this process (and the inline script in the JSP). Open the `validate()` block, or the script function that dialog calls, to the last line. Read every **regex**, jquery `rules` / `messages`, maxlength, show/hide, enable/disable, readonly, and submit guard in that JS. Do not score a dialog from a one-line summary in the inventory. When that summary and the JSP or `validate()` disagree, the JSP and `validate()` are the rule.
-7. Open the **`.properties`** files that supply the Spanish text for those pages. Prefer paths in the inventory **Code map**. Also open a properties file that an opened JSP or JS names (`fmt:message`, `fmt:bundle`, Stripes label bundle, `getText`, a jquery message key that maps to a bundle). Prefer the Spanish locale file when both exist (`*_es*.properties`, or the default `StripesResources.properties` / module resources that hold Spanish). Quote the **exact Spanish value** for the key. If the key is absent, write `Not found`. Do not invent Spanish wording. Hardcoded Spanish in the JSP or JS counts as the message and the properties cell is `Not found` (or note “hardcoded in JSP/JS”).
-8. Related dialogs stay separate. An agent dialog, an apoderado dialog, and an agency dialog are three forms. Score each field on the form it belongs to.
-9. A parent match does not close the list. A Continuar rule that stops when a list is empty does not replace the dialog behind Agregar. Finish the dialog after the parent row is scored.
-10. In the report, **Tab** is the tab that opens the dialog. **Section** is the dialog title. One row per field and per behavior, the same as a field on the main screen. Put the JS regex or condition in **JS rule**. Put the resolved Spanish text in **Spanish message**.
+4. On a workflow pass, name every reviewers tab `getTabs` / the template can show. Open the Solicitud capture child with `readonly` true (and any other reviewer content components: Documentos, Dictamen detalle, etc. that this flow loads). Score section titles, field lock state, hidden actions, and conditional fields.
+5. Repeat when a dialog opens another dialog.
+6. Read each of those files to the last line. If a read stops early, read the rest before any row is scored. A control past the cutoff is not Missing and is not skipped.
+7. On the old side, open the page named in the inventory, every JSP it includes, and every JSP a script loads into a dialog. For reviewers, open the consulta tree (`consultas.jsp`, `consultarSolicitud.jsp`, detalle / pagos / terceros). Open every **JavaScript** file those pages include under this process (and the inline script in the JSP). Open the `validate()` block, or the script function that dialog calls, to the last line. Read every **regex**, jquery `rules` / `messages`, maxlength, show/hide, enable/disable, readonly, and submit guard in that JS. Do not score a dialog from a one-line summary in the inventory. When that summary and the JSP or `validate()` disagree, the JSP and `validate()` are the rule.
+8. Open the **`.properties`** files that supply the Spanish text for those pages. Prefer paths in the inventory **Code map**. Also open a properties file that an opened JSP or JS names (`fmt:message`, `fmt:bundle`, Stripes label bundle, `getText`, a jquery message key that maps to a bundle). Prefer the Spanish locale file when both exist (`*_es*.properties`, or the default `StripesResources.properties` / module resources that hold Spanish). Quote the **exact Spanish value** for the key. If the key is absent, write `Not found`. Do not invent Spanish wording. Hardcoded Spanish in the JSP or JS counts as the message and the properties cell is `Not found` (or note “hardcoded in JSP/JS”).
+9. Related dialogs stay separate. An agent dialog, an apoderado dialog, and an agency dialog are three forms. Score each field on the form it belongs to.
+10. A parent match does not close the list. A Continuar rule that stops when a list is empty does not replace the dialog behind Agregar. Finish the dialog after the parent row is scored. Finishing the dictamen body does not replace reviewers Solicitud.
+11. In the report, **Tab** is the tab that opens the dialog (use `Reviewers → Solicitud → …` for reviewers sections). **Section** is the dialog title or section heading. One row per field and per behavior, the same as a field on the main screen. Put the JS regex or condition in **JS rule**. Put the resolved Spanish text in **Spanish message**.
 
-Write the report only after every component and every modal on that list has been scored.
+Write the report only after every component, every modal, and (on workflow) every reviewers tab on that list has been scored.
 
 ### Map fields
 
@@ -176,6 +211,6 @@ Every finding names the file inside this process folder, the field or method, an
 
 Tell the user the report path for this surface and the counts: match, corrected, incorrect, incomplete, missing. Lead with **Corrected** when this pass closed a previous finding, then **Incorrect**, **Missing**, and **Incomplete**.
 
-Name every modal that was opened and scored. If this process has no modal, say so.
+Name every modal that was opened and scored. If this process has no modal, say so. On a workflow pass, also name which reviewers tabs were opened (or that the page has no reviewers bar).
 
 Then stop. Tell the user to change `- [ ]` to `- [x]` on the rows to fix, save the file, and run `/proceso-field-fix`. A Match row has an empty Fix cell. Do not edit the form in this pass.
