@@ -1,0 +1,25 @@
+---
+description: Process 220103 requisitos importación acuícola — read the knowledge base first
+alwaysApply: false
+globs:
+  - legacy/vuc_mtto_guber/sagarpa/src/mx/gob/ventanillaunica/www/gubernamentales2/sagarpa/requisitosImportacion/**
+  - legacy/vuc_mtto_guber/sagarpa/WebContent/WEB-INF/jsp/gubernamentales2/sagarpa/requisitosImportacion/**
+  - legacy/vuc_mtto_guber/sagarpa/WebContent/js/modulos/gubernamentales2/sagarpa/**
+  - legacy/vuc_mtto_guber/gubernamentales-common/WebContent/WEB-INF/jsp/gubernamentales2/common/mercanciaGubernamental/**
+  - legacy/vuc_mtto_guber/sagarpa/WebContent/WEB-INF/jsp/gubernamentales2/sagarpa/common/terceros/**
+  - .cursor/knowledge/procesos/220103/**
+---
+
+# Process 220103 — Requisitos de importación acuícola
+
+Read `.cursor/knowledge/procesos/220103/legacy.md` (registration) or `.cursor/knowledge/procesos/220103/legacy-workflow.md` (workflow) before changing this trámite. Open only the files named in that file’s code map.
+
+- Process number: `220103`
+- Surface: `registration`
+- Entity: `SolicitudSagarpaRequisitosImportacionAcuicola` — `@DiscriminatorValue` `DiscriminadorTipoTramiteConstants.SOLICITUD_SAGARPA_REQUISITOS_IMPORTACION_ACUICOLA` (`220103`)
+- Package: `legacy/vuc_mtto_guber/sagarpa/src/mx/gob/ventanillaunica/www/gubernamentales2/sagarpa/requisitosImportacion`
+- Registro URL: `/gubernamentales2/sagarpa/requisitosImportacion/registrarSolicitudAC.action`
+- Consulta URL: `/gubernamentales2/sagarpa/requisitosImportacion/consultarSolicitud.action`
+- Session key: `CommonConstants.VARIABLE_SESION_TRAMITE` = `tramite`; also `ID_TRAMITE` and `LISTA_MERCANCIAS_GUBERNAMENTALES` = `_listaMercanciaGubernamentales`
+- Spring bean (solicitud): `SolicitudSagarpaRequisitosImportacionAcuicola` in `legacy/vuc_mtto_guber/sagarpa/WebContent/WEB-INF/config/spring/sagarpa/sagarpa-requisitoImportacion-context.xml`
+- Module pom base artifact: `gubernamentales-common` and `base-jms-ibm` — trees: `legacy/vuc_mtto_guber/gubernamentales-common`, `legacy/vuc_mtto_commons/base-jms-ibm`
