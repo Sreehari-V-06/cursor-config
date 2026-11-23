@@ -1,0 +1,36 @@
+---
+description: Field-validation reports must score live UI and always include headings, catalog empty text, readonly vs disabled, parent catalogs, paste, Continuar across tabs, and solicitante
+globs:
+  - model-result/**/filed-validation/**
+  - model-result/**/workflow-validation/**
+  - .cursor/skills/proceso-field-validation/**
+alwaysApply: false
+---
+
+# Field validation — live UI and required coverage
+
+When writing or rewriting a proceso field-validation report, score what both screens do, not what the JSP always renders or what an Angular enum comment claims. Depth to match: `model-result/32515/filed-validation/report.md`.
+
+Do not file **Incorrect** or **Missing** until all of these are true:
+
+- Old **JavaScript** for that field was opened (`change`, `show`/`hide`/`display`, `disabled`, jquery `validate` `rules`). A `c:if` / `mostrar*` flag only means the control exists in markup.
+- New `validadores.tipo` is a type `formas-dinamicas` actually applies (`pattern`, `required`, `minlength`, `customMaxlength`). `pattren` and other typos never run.
+- One typed example was checked. If both UIs keep `ABC-01`, the row is **Match** even if a comment says alphanumeric-only.
+
+Typical live-UI matches that markup-only scoring gets wrong:
+
+- Field in JSP, hidden by JS until a catalog value (Otro uso / `#divOtrosUso`).
+- País catalog in JSP, locked to `MEX` + `disabled` for nacional destinatario (`muestraCamposNacional`).
+- Optional text in JSP, jquery `{ minlength: 5, maxlength: 5, digits: true }` on save.
+- `display:none` whose `.show()` is commented → **Correctly absent**, not Missing (RFC on 220103).
+
+Every report must include these types (Match when they agree; do not skip a type):
+
+- Every tab label and every section heading (Kind `Text`)
+- Every catalog empty option: old `nonSelectionText` versus new `marcadorDePosicion` / catalogo-select default `Seleccione una opción`
+- Readonly versus disabled (`readonly="true"` is not `desactivado`)
+- Parent catalogs: child loads from parent and clears when parent changes
+- Paste on every filtered field (stay in the box and whether Continuar/Agregar saves it)
+- Continuar from another tab (validators on tabs that are not open)
+- Shared Solicitante / session block under Only in the migrated form on registration
+- Required, maxlength, keypress, pattern, message, on-failure, show/hide, enable/disable

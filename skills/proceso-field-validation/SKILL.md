@@ -19,10 +19,13 @@ description: >
   from the old JSP, the old JavaScript (including validate() and regex),
   and the old .properties files (exact Spanish messages). Analyse in
   detail: required, maxlength, filters, paste, validators, messages,
-  show/hide, enable/disable, readonly, section headings, submit guards,
-  and modal fields. The report records the JS rule and the Spanish
-  message when they exist. After the report, the user marks Fix on the
-  rows to change. Use when the user invokes /proceso-field-validation
+  show/hide, enable/disable, readonly versus disabled, section and tab
+  headings, catalog empty-option wording, parent catalogs, Continuar
+  from another tab, solicitante session block, submit guards, and
+  modal fields. Every report must include those types (Match when they
+  agree). The report records the JS rule and the Spanish message when
+  they exist. After the report, the user marks Fix on the rows to change.
+  Use when the user invokes /proceso-field-validation
   or asks to validate the form again after fixes. Do not use this skill
   to build the process knowledge base, to edit the form, or to fix a
   backend GitHub issue. The form fix is /proceso-field-fix. The
@@ -92,6 +95,8 @@ Fill [report-template.md](report-template.md). Delete none of its sections. Set 
 
 Write for a person who will choose rows to fix, and for the frontend developer who will make the change. Open with what they can still do on the screen. Under each section heading, one short sentence in everyday language. In the reading columns, say **Old page** and **New page**. The **Item** cell is the full label shown on the screen. Do not shorten it. On **Incorrect**, **Incomplete**, **Missing**, and **Match** rows, fill **JS rule** and **Spanish message** when the old side has them (same columns for registration and workflow). **JS rule** is the regex, jquery rule, or validation condition from the JS (or inline script), quoted as written. **Spanish message** is the exact Spanish text from the `.properties` file (or from a hardcoded Spanish string in the JSP/JS when no properties key exists). Write `Not found` in that cell when the code does not define it. Do not invent a message. The last column is **Where to change**: the file inside this process folder, the field or method, and the change in plain words. Name a shared file only when this form cannot do the change alone. Do not fill that column with a `legacy.md` citation. Group **Incorrect** rows under a short heading when several rows are the same kind of problem. Keep every row.
 
+**Do not write the report until Required report coverage below is finished.** A pass that only scores required/maxlength/pattern is incomplete. `model-result/32515/filed-validation/report.md` is the depth to match: headings, catalog empty text, readonly versus disabled, parent catalogs, paste, Continuar from another tab, and the solicitante session block. Put a Match row when that type agrees. Do not omit the type.
+
 The first column of **Incorrect**, **Missing**, **Incomplete**, and **UI behavior** is **Fix**. An open row uses `- [ ]`. A chosen row has `x` inside the brackets: `- [x]`, `- [X]`, `- [ x]`, or `[x]`. A Match row leaves that cell empty. An `x` written outside the brackets is not a choice. This mark is plain Markdown so the same file works on any system. Do not use an HTML checkbox, a preview widget, or a plugin. Do not add a second list above the table. When this pass rewrites the report, keep a chosen mark on a row that is still open. Do not edit the form in this pass. The user runs `/proceso-field-fix` after saving the marks.
 
 If the report for this surface (and, on workflow, this task flow) already exists, this pass updates that file. Do not start a second report for the same surface/flow. Do not overwrite a different workflow flow’s report. Read the previous **Incorrect**, **Missing**, **Incomplete**, and **Corrected** rows first. Re-check every one of those items in the current migrated tree, then rewrite the file with this pass’s results.
@@ -116,11 +121,12 @@ If the report for this surface (and, on workflow, this task flow) already exists
 - [ ] List every page on the chosen route, every component those pages declare, every section/tab (including reviewers), and every modal those components open
 - [ ] Read each of those files to the last line
 - [ ] Open the old JSP (including consulta JSPs on workflow), the old JavaScript (validate(), regex, UI logic), and the related .properties files for each page and each modal, to the last line
+- [ ] For every scored field, confirm live JS show/hide/enable/disable and jquery `rules`; on the new side confirm `formas-dinamicas` actually applies the `tipo` (`pattern` vs typos such as `pattren`)
 - [ ] Map each field, including every field inside each modal and each reviewers Solicitud section, to a migrated control
-- [ ] Cross-check in detail for each field and section: required, maxlength, character filter, paste, validator regex/conditions, Spanish message, on-failure, shown/hidden, enabled/disabled, readonly, headings/wording, catalog parent, submit/Continuar/Guardar/dialog-accept guards, and reviewers conditional rendering / readonly display
+- [ ] Cross-check in detail for each field and section using **Required report coverage** (do not skip a type): required, maxlength, character filter, paste, validator regex/conditions, Spanish message, on-failure, shown/hidden, enabled/disabled, readonly versus disabled, tab and section headings, catalog empty-option wording, catalog parent and clear-on-change, Continuar from another tab, solicitante session block, submit/Continuar/Guardar/dialog-accept guards, and reviewers conditional rendering / readonly display. Do not file Incorrect from JSP render or enum comments when the live screens agree
 - [ ] Resolve each message key to the exact Spanish text in the .properties file when a key exists
 - [ ] Classify each finding, including previously reported items
-- [ ] Update the report for that surface/flow only after that list is finished: filed-validation/report.md for registration, workflow-validation/<flow-slug>/report.md for workflow. Fill JS rule and Spanish message columns
+- [ ] Update the report for that surface/flow only after Required report coverage is finished: filed-validation/report.md for registration, workflow-validation/<flow-slug>/report.md for workflow. Fill JS rule and Spanish message columns
 - [ ] Tell the user which flow, which reviewers tabs, and which modals were opened, then tell them to mark Fix with `- [x]`, save, and run /proceso-field-fix, then stop
 ```
 
@@ -161,6 +167,14 @@ Skip **Dead selectors** as migrated gaps when the legacy file says the id is not
 
 Compare the legacy columns to the migrated control. Sources on the old side are always **JSP + JavaScript + `.properties`**, for registration and for workflow. On a workflow pass, also use `.cursor/knowledge/frontend-base/workflow.md` for the new-page contract (where the field lives, shared shell versus procedure body, department versus procedure). On a registration pass, compare against the trámite folder only for the new side. Quote both patterns when they differ. Give one concrete value that one side accepts and the other rejects before calling the row **Incorrect**.
 
+**Score the live screen, not the markup.** Pass 1 of 220103 filed Identificación, Código postal, Otro uso, and País as Incorrect from JSP/`mostrar*`/enum comments. Both UIs already matched. Do not repeat that. Before any Incorrect / Missing / UI-behavior row:
+
+1. Open the **JavaScript that runs on that screen** (`change` / `show` / `hide` / `disabled` / `css('display')` / jquery `rules`). A field the JSP always renders is still Hidden when JS sets `display:none` until a value (example: `#divOtrosUso` only when Uso text is `Otro`). A catalog is still Disabled when JS sets `disabled = true` and `value = "MEX"` (example: `muestraCamposNacional` for destinatario).
+2. Open jquery `validate({ rules })` even when the JSP has no `class="required"` and the inventory Filter cell is `Not found` (example: `'terceros.codigoPostal': { minlength: 5, maxlength: 5, digits: true }`).
+3. On the new side, a `validadores` entry is not a live check until `formas-dinamicas` applies that `tipo`. `tipo === 'pattern'` runs; `tipo: 'pattren'` does not. An enum regex that never attaches is not Incorrect.
+4. `style="display:none"` whose JS `.show()` is commented out is **Correctly absent**, not Missing (example: `#divSeccionRfc` on 220103).
+5. Type the example on both UIs in your head before Incorrect. If both keep `ABC-01`, it is Match even if a comment says “alphanumeric only”.
+
 Run the same checks on every field inside every modal. Record a finding only where they differ:
 
 - Required when, including a role or visibility condition (JSP `class="required"`, stripes `@Validate`, or JS that adds `required`)
@@ -179,6 +193,26 @@ Run the same checks on every field inside every modal. Record a finding only whe
 - Catalog parent: `parentSelectName` versus lists loaded independently
 
 Also compare **Role branches**, **Submit validation**, and **Documents** from the inventory for this surface. A submit path that never runs the migrated validators is **Incorrect** even when each control has a validator.
+
+### Required report coverage
+
+Every registration and every workflow report must score these types. Put each in **UI behavior**, **Match**, **Incorrect**, **Incomplete**, **Missing**, **Only in the migrated form**, or **Correctly absent**. A Match row is required when the type agrees. Skipping a type because “nothing looked wrong” is not allowed. Reference depth: `model-result/32515/filed-validation/report.md`.
+
+| Type | Where it goes | What to score | If the process has none |
+| --- | --- | --- | --- |
+| Tab labels | UI behavior, Kind `Text`, Behavior `Shown` / `Wording` | Every capture tab (and reviewers tabs on workflow) | Write `None` only if the page has no tabs |
+| Section headings | UI behavior, Kind `Text` | Every `h2`/`h3`/`ng-titulo` / `fmt:message` heading on the page and inside every modal | Do not skip a heading that stays on screen with the same words — that is Match |
+| Catalog empty option | UI behavior, Kind `Text`, Behavior `Wording`; count Incorrect | Old `nonSelectionText` versus new `marcadorDePosicion` / catalogo-select default (`Seleccione una opción` when placeholder is empty). One row per catalog | If there is no catalog, say so under Not compared |
+| Readonly versus disabled | UI behavior, Kind `Field`, Behavior `Readonly` or `Disabled` | Old `readonly="true"` versus new `soloLectura` versus `desactivado` / `disabled`. A value the person can see but cannot type is Readonly, not Disabled | If no field is locked, say so in the UI behavior closing sentence |
+| Show / hide / enable | UI behavior | Role, tipo persona, nacional/extranjero, catalog value (Otro uso), consulta versus registro | Always at least the tabs and the fields that never change (`Always`) |
+| Parent catalogs | Match or Incorrect | `parentSelectName`: child list loads from parent; child clears when parent changes. One row per child catalog | If catalogs are independent, say that on the row |
+| Paste | Same row as the filter / pattern | For every character the filter blocks: does paste stay, and does Continuar / Agregar / Guardar save it? | If the field has no filter, say “no live filter; paste of `X` stays on both” on the Match row |
+| Continuar from another tab | Match or Incorrect | Does Continuar / Guardar run validators on tabs that are not open (`ignore: []` / `validarFormularios` of every mounted form)? Example: leave a required field empty on tab 2, stay on tab 1, press Continuar | Always score. If there is only one panel, say so |
+| Solicitante / session block | Only in the migrated form (registration) | Shared gobmx `<solicitante>` (or department equivalent): which fields show, disabled/readonly, física versus moral | If this surface has no solicitante include, say so under Not compared |
+| Required, maxlength, keypress, pattern, message, on-failure | Match / Incorrect / Incomplete / Missing | Every Fields inventory row and every modal field | Dead selectors go under Correctly absent |
+| Documents | Missing or Not compared | Inventory **Documents** / `validaReglaDocumentosEspecificos` | `DEFAULT_SIN_DOCTOS` / Not found → Not compared |
+
+Catalog empty-option and readonly-versus-disabled mismatches live in **UI behavior**. Count them in Incorrect. Do not copy those rows into the Incorrect table (same as 32515). Value mismatches (a typed example one side accepts and the other rejects) stay in the Incorrect table.
 
 ### Classify
 
@@ -212,5 +246,7 @@ Every finding names the file inside this process folder, the field or method, an
 Tell the user the report path for this surface and the counts: match, corrected, incorrect, incomplete, missing. Lead with **Corrected** when this pass closed a previous finding, then **Incorrect**, **Missing**, and **Incomplete**.
 
 Name every modal that was opened and scored. If this process has no modal, say so. On a workflow pass, also name which reviewers tabs were opened (or that the page has no reviewers bar).
+
+Confirm Required report coverage in that summary: headings, catalog empty text, readonly versus disabled, parent catalogs, paste, Continuar from another tab, solicitante block. If a type had nothing to score, say that explicitly.
 
 Then stop. Tell the user to change `- [ ]` to `- [x]` on the rows to fix, save the file, and run `/proceso-field-fix`. A Match row has an empty Fix cell. Do not edit the form in this pass.

@@ -27,7 +27,9 @@ To choose a fix, put `x` inside that row’s brackets (`- [x]` or `- [ x]`), sav
 
 ## UI behavior
 
-What stays on screen, what is hidden, what can be typed, and which headings change, on the main screen and inside every modal. One row per item. **Tab** is the tab that opens a modal. **Section** is the dialog title. The seven rows that only repeat an Incorrect finding are not counted again.
+What stays on screen, what is hidden, what can be typed, and which headings change, on the main screen and inside every modal. One row per item. **Tab** is the tab that opens a modal. **Section** is the dialog title. Catalog empty-option wording and readonly-versus-disabled mismatches live in this table and count as Incorrect; do not copy them into the Incorrect table. The rows that only repeat an Incorrect finding are not counted again.
+
+This section must include, every pass: every tab label; every section heading; every catalog empty option (`nonSelectionText` versus `marcadorDePosicion` / default `Seleccione una opción`); every field that is readonly, disabled, shown, or hidden; and readonly versus disabled when the old page uses `readonly="true"`.
 
 Paths under **Where to change** start at the migrated tree. Name the file, the field or method, and the change. Write `No change` on a Match row.
 
@@ -79,9 +81,11 @@ If none: `None`.
 
 ## Match
 
+Include parent catalogs (child loads from parent and clears when the parent changes), Continuar from another tab (validators on tabs that are not open), paste on filtered fields, and required / maxlength / pattern when those outcomes match.
+
 | Tab | Section | Item | What matches | JS rule | Spanish message |
 | --- | --- | --- | --- | --- | --- |
-| `<tab>` | `<section heading>` | `<full label on the screen>` | `<required, max, pattern, or behavior, in plain words>` | `<regex or JS condition from old JS, or Not found>` | `<exact Spanish from .properties, or Not found>` |
+| `<tab>` | `<section heading>` | `<full label on the screen>` | `<required, max, pattern, paste, parent catalog, or Continuar-from-other-tab, in plain words>` | `<regex or JS condition from old JS, or Not found>` | `<exact Spanish from .properties, or Not found>` |
 
 ## Behavior
 
@@ -91,7 +95,7 @@ A short map of the tables above. One line each. Do not repeat the file and the c
 
 ## Only in the migrated form
 
-Controls on the new page that the old page does not have. Not a gap.
+Controls on the new page that the old page does not have. Not a gap. On a registration pass, always include the shared Solicitante / session block when the page mounts it (which fields show, disabled/readonly, física versus moral).
 
 | Tab | Section | Control | Checks found | Where it lives |
 | --- | --- | --- | --- | --- |
